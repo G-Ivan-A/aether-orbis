@@ -1,0 +1,61 @@
+# CI AetherOrbis. На фазе 0 роадмапа проверяются документация, структура и границы
+# репозитория. Команды линта и тестов кода подключаются с фазы 1.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  docs:
+    name: Docs and structure
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate documentation file naming
+        run: ./tools/validate-file-naming.sh
+      - name: Validate frontmatter contract
+        run: ./tools/validate-frontmatter.sh
+      - name: Validate repository boundary (no runtime data)
+        run: ./tools/validate-repo-boundary.sh
+      - name: Install config validation dependencies
+        run: python3 -m pip install --user --quiet pyyaml
+      - name: Validate direction configs
+        run: |
+          python3 - <<'PY'
+          import glob, sys
+          try:
+              import yaml
+          except ImportError:
+              sys.exit("PyYAML is required")
+          failures = 0
+          for path in sorted(glob.glob("configs/directions/*/research-profile.yaml")):
+              cfg = yaml.safe_load(open(path, encoding="utf-8"))
+              profile = cfg.get("research_profile", {})
+              weights = profile.get("weights", {})
+              total = sum(weights.values())
+              if abs(total - 1.0) > 1e-9:
+                  print(f"ERROR: {path}: weights must sum to 1.0, got {total}")
+                  failures += 1
+              missing = set(profile.get("relevance_criteria", [])) - set(weights)
+              if missing:
+                  print(f"ERROR: {path}: criteria without weights: {sorted(missing)}")
+                  failures += 1
+              if cfg.get("sufficiency", {}).get("on_exhaustion") != "zero":
+                  print(f"ERROR: {path}: sufficiency.on_exhaustion must be 'zero'")
+                  failures += 1
+          sys.exit(1 if failures else 0)
+          PY
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: |
+          echo "Контрактные тесты подключаются с фазы 1 роадмапа (docs/roadmap.md)."
+          echo "Пока в tests/ нет исполняемых тестов, шаг проходит как no-op."

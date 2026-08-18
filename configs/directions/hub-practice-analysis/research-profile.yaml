@@ -1,0 +1,46 @@
+# Направление MVP №2: анализ практик Хаба (Habr)
+# Контракты: docs/standards/relevance-gate-contract.md, sufficiency-gate-contract.md
+research_profile:
+  id: hub-practice-analysis
+  topic: hub-practice-analysis
+  question: >-
+    Какие инженерные и методологические практики описываются в публикациях Habr
+    и как они соотносятся со стандартами Хаба hybrid-Intelligence-lab.
+  sources:
+    seeds: []          # заполняется на фазе 1 роадмапа
+    max_sources_per_run: 100
+  relevance_criteria:
+    - source_authority
+    - technical_specificity
+    - evidence_presence
+    - novelty
+    - applicability
+  weights:
+    source_authority: 0.20
+    technical_specificity: 0.25
+    evidence_presence: 0.30
+    novelty: 0.10
+    applicability: 0.15
+  threshold: 0.62
+
+sufficiency:
+  thresholds:
+    question_coverage: 0.75
+    evidence_density: 2
+    source_diversity: 0.5
+    conflict_level_max: 0.2
+    uncertainty_ratio_max: 0.3
+  budget:
+    max_iterations: 3
+    max_cost_rub: 150
+  on_exhaustion: zero
+
+model_routing:
+  extraction: cost-sensitive
+  relevance_scoring: cost-sensitive
+  graph_building: mid-tier
+  sufficiency_evaluation: mid-tier
+  analysis: quality-first
+
+telemetry:
+  enabled: true
