@@ -216,3 +216,50 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---------------------------------------------------------------------------
+# AetherOrbis: runtime-данные НЕ хранятся в репозитории
+# См. docs/adr/2026-08-adr-003-infrastructure.md и docs/concept.md, раздел 7
+# ---------------------------------------------------------------------------
+
+# Секреты и ключи API
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+credentials*.json
+
+# Базы данных: graph, vector, реляционные
+data/
+storage/
+*.db
+*.sqlite
+*.sqlite3
+*.duckdb
+kuzu_db/
+neo4j/
+qdrant_storage/
+chroma/
+
+# Сырой и извлечённый контент источников (Raw / Source Store)
+raw/
+sources/
+crawl_cache/
+extracted/
+
+# Артефакты прогонов, телеметрия, логи
+runs/
+artifacts/
+telemetry/
+logs/
+*.log
+
+# Кэши моделей и промежуточные кэши
+.model_cache/
+.cache/
+.semantic_cache/
+
+# Логи расследований CI
+ci-logs/
