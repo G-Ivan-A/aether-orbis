@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.1
-updated: 2026-08-18
+version: 0.2
+updated: 2026-09-02
 temperature: 0.1
 ---
 
@@ -17,6 +17,7 @@ temperature: 0.1
 | L2 | [`architecture.md`](architecture.md) | диаграммы Mermaid, потоки данных, зоны ответственности |
 | L4 | [`adr/README.md`](adr/README.md) | реестр архитектурных решений |
 | L4 | [`standards/`](standards/) | контракты границ компонентов |
+| L2 | [`analysis/`](analysis/) | аналитические документы, обосновывающие изменения контрактов |
 | — | [`roadmap.md`](roadmap.md) | фазы 0–5, задачи и зависимости, риски |
 
 ## Контракты
