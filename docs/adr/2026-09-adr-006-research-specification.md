@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 0.1
-updated: 2026-09-02
+version: 0.2
+updated: 2026-09-03
 temperature: 0.1
 owner: G-Ivan-A
 decision-type: product
@@ -18,7 +18,7 @@ decision-type: product
 | Decision status | proposed |
 | Decision date | 2026-09-02 |
 | Owner | G-Ivan-A |
-| Source | [Анализ вариативности моделей Acquisition, § 6.1, § 6.2, § 6.6](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29) |
+| Source | [Анализ вариативности моделей Acquisition, § 6.1, § 6.2, § 6.6](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29); [решения фаундера по Q2 от 2026-09-03](https://github.com/G-Ivan-A/aether-orbis/pull/30#issuecomment-5521971261) |
 | Impacted artifacts | новый контракт `docs/standards/research-specification-contract.md`, [`docs/standards/sufficiency-gate-contract.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/sufficiency-gate-contract.md), [`docs/concept.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/concept.md), [`configs/directions/`](https://github.com/G-Ivan-A/aether-orbis/tree/main/configs/directions) |
 | Supersedes | — |
 | Superseded by | — |
@@ -62,6 +62,12 @@ decision-type: product
    обоснованиями, итерации расширения, израсходованный бюджет и итоговый статус.
 8. Конфигурация **ДОЛЖНА** разделяться на Research Profile (исследовательская политика) и Runtime
    Configuration (модели, воркеры, хранилища, бюджеты, повторы). Смешение классов **НЕ ДОПУСКАЕТСЯ**.
+9. **Область Фазы 1 (решение фаундера, Q2).** Контракт спецификации проектируется общим для всех
+   пяти репрезентативных моделей, но полноценная поддержка в Фазе 1 — конфигурация, end-to-end
+   прогон и evaluation — обеспечивается **только** для `AM-1` Domain Monitoring (методологии Хаба) и
+   `AM-2` Entity / Relationship Extraction (репутационный инжиниринг). `AM-3`–`AM-5` остаются
+   выразимыми в контракте, но их практическая настройка откладывается. Из этого **НЕ СЛЕДУЕТ**
+   право упрощать контракт до нужд двух моделей: выразительность проверяется на всех пяти.
 
 ## Decision Drivers
 
@@ -95,7 +101,8 @@ decision-type: product
 
 - Порог входа в конфигурирование выше: спецификация содержит шесть блоков вместо плоского профиля.
   Митигация — шаблоны спецификаций под типовые модели.
-- Риск преждевременного обобщения: часть блоков не нужна направлениям MVP. Митигация — обязательными
+- Риск преждевременного обобщения: часть блоков не нужна двум направлениям MVP (п. 9), и их
+  выразительность до Фазы 2 подтверждена только аналитически, а не прогоном. Митигация — обязательными
   делаются `objective`, `target`, `scope`; остальные имеют умолчания.
 - Расширение набора статусов исхода несовместимо с текущим `sufficiency-gate-contract` и требует
   мажорного повышения его версии.

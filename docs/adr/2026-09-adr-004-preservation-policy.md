@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 0.1
-updated: 2026-09-02
+version: 0.2
+updated: 2026-09-03
 temperature: 0.1
 owner: G-Ivan-A
 decision-type: product
@@ -18,7 +18,7 @@ decision-type: product
 | Decision status | proposed |
 | Decision date | 2026-09-02 |
 | Owner | G-Ivan-A |
-| Source | [Анализ вариативности моделей Acquisition, § 7](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29) |
+| Source | [Анализ вариативности моделей Acquisition, § 7](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29); [решения фаундера по Q1, Q3 от 2026-09-03](https://github.com/G-Ivan-A/aether-orbis/pull/30#issuecomment-5521971261) |
 | Impacted artifacts | [`docs/concept.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/concept.md), новый контракт `docs/standards/preservation-contract.md`, [`docs/standards/extraction-contract.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/extraction-contract.md), [`docs/standards/relevance-gate-contract.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/relevance-gate-contract.md) |
 | Supersedes | — |
 | Superseded by | — |
@@ -67,6 +67,18 @@ artifact → L4 full knowledge product`. Проверка гипотезы
    обращения к источнику **НЕ ДОЛЖНА** использоваться как гарантия воспроизводимости.
 6. Способ получения `summary` (метаописание, первые абзацы, вызов модели) **НЕ ФИКСИРУЕТСЯ** этим
    решением: это вопрос реализации Фазы 1 и отдельного ADR.
+7. **Область Фазы 1 (решение фаундера, Q1).** Измерение `observation_history` фиксируется в
+   контракте, но в Фазе 1 **ДОЛЖНО** принимать единственное значение `latest_only`. Значение
+   `full_history` (и связанный профиль `observation`) остаётся концептуальной заготовкой и
+   реализуется не раньше Фазы 2. Фокус MVP — актуальное состояние знаний, а не временные ряды.
+8. **Владение решением (решение фаундера, Q3).** Профиль сохранения **ДОЛЖЕН** объявляться владельцем
+   конфигурации (product owner, запускающий процесс, аналитик) **явно** в `Research Specification`.
+   Решение о сохранении не принимается ни кодом модуля, ни умолчанием пайплайна.
+9. **Умолчание.** Для массовых задач умолчанием **ЯВЛЯЕТСЯ** экономный профиль
+   (`acquired_artifact = evidence_fragments`, включающий метаданные и summary; `derived_knowledge =
+   claims`; `observation_history = latest_only`). Профиль `archival` (`acquired_artifact =
+   full_content`) применяется **ТОЛЬКО** при явном указании в спецификации для критически важных
+   источников.
 
 ## Decision Drivers
 
@@ -102,8 +114,12 @@ artifact → L4 full knowledge product`. Проверка гипотезы
   именованные профили и валидация сочетаний в CI.
 - Требуется новый контракт `preservation-contract`, которого сейчас нет; до его принятия действуют
   текущие формулировки контрактов.
-- `observation_history` не требуется ни одному направлению MVP и может оказаться преждевременным;
-  предлагается зафиксировать измерение концептуально, реализацию отложить.
+- `observation_history` не требуется ни одному направлению MVP: по решению фаундера (Q1) измерение
+  зафиксировано концептуально, а его реализация отложена — в Фазе 1 допустимо только `latest_only`.
+  Риск: профиль `observation` остаётся непроверенным на практике до Фазы 2.
+- Явное владение решением о профиле (п. 8) переносит ответственность за стоимость и за риск
+  невоспроизводимости на владельца конфигурации; без ревью спецификаций это может привести к
+  систематическому выбору экономного профиля там, где нужен `archival`.
 
 **Совместимость и миграция**
 
@@ -122,6 +138,8 @@ artifact → L4 full knowledge product`. Проверка гипотезы
 | Provenance и content identity присутствуют при любом сочетании значений | контрактный тест сохранения |
 | Понижение `acquired_artifact` зафиксировано в записи прогона | контрактный тест записи прогона |
 | Именованный профиль разворачивается в допустимое сочетание значений | валидация конфигураций в CI |
+| В Фазе 1 `observation_history` не принимает значений, кроме `latest_only` | валидация конфигураций в CI |
+| Профиль `archival` объявлен явно в `Research Specification`, а не унаследован по умолчанию | ревью спецификации и валидация конфигураций в CI |
 
 ## Lifecycle
 

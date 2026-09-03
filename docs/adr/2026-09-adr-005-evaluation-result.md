@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 0.1
-updated: 2026-09-02
+version: 0.2
+updated: 2026-09-03
 temperature: 0.1
 owner: G-Ivan-A
 decision-type: product
@@ -18,7 +18,7 @@ decision-type: product
 | Decision status | proposed |
 | Decision date | 2026-09-02 |
 | Owner | G-Ivan-A |
-| Source | [Анализ вариативности моделей Acquisition, § 6.4](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29) |
+| Source | [Анализ вариативности моделей Acquisition, § 6.4](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29); [решения фаундера по Q4 от 2026-09-03](https://github.com/G-Ivan-A/aether-orbis/pull/30#issuecomment-5521971261) |
 | Impacted artifacts | [`docs/standards/relevance-gate-contract.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/relevance-gate-contract.md), [`docs/standards/extraction-contract.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/extraction-contract.md), [`docs/standards/telemetry-contract.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/telemetry-contract.md), [`docs/concept.md`](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/concept.md), [`configs/directions/`](https://github.com/G-Ivan-A/aether-orbis/tree/main/configs/directions) |
 | Supersedes | — |
 | Superseded by | — |
@@ -61,6 +61,14 @@ decision-type: product
    авторитет) и полную оценку после извлечения. Обе фиксируются телеметрией как отдельные решения.
 7. Решение `REJECTED` **НЕ ДОЛЖНО** приводить к потере оценки: `EvaluationResult` отклонённого
    материала сохраняется в Source Intelligence и переиспользуется при смене задачи.
+8. **Source lineage для `independence` (решение фаундера, Q4).** Метаданные закладываются уже в
+   Фазе 1: контракт **ДОЛЖЕН** содержать поле `source_group_id`, объединяющее материалы, не
+   являющиеся независимыми друг от друга. Эвристика Фазы 1 — минимальная: группировка по
+   `canonical_url` либо по точному совпадению `content_hash` (детекция полных дубликатов и
+   перепечаток). Сложные эвристики (семантическое сходство, граф цитирования, общий издатель)
+   **ВЫНОСЯТСЯ** в бэклог Фазы 2 и требуют отдельного ADR.
+9. Характеристика `independence` **НЕ ДОЛЖНА** интерпретироваться как доказанная независимость
+   источников: в Фазе 1 она означает лишь отсутствие обнаруженного полного дублирования.
 
 ## Decision Drivers
 
@@ -97,8 +105,11 @@ decision-type: product
   Митигация — базовый набор по умолчанию.
 - Калибровка нескольких характеристик сложнее калибровки одного порога; требует evaluation-набора
   на Фазе 2.
-- Характеристика независимости источников (`independence`) требует source lineage, которого в
-  контрактах пока нет — выносится в отдельный ADR.
+- Характеристика независимости источников (`independence`) в Фазе 1 опирается на минимальную
+  эвристику `source_group_id` (п. 8) и потому систематически **переоценивает** независимость:
+  перефразированная перепечатка с другим `content_hash` и другим URL будет считаться независимой.
+  Митигация — явная фиксация ограничения в интерпретации характеристики (п. 9) и отдельный ADR по
+  полноценному source lineage в Фазе 2.
 
 **Совместимость и миграция**
 
@@ -118,11 +129,13 @@ decision-type: product
 | Поле `confidence` отсутствует в новых контрактах | линт-правило и ревью PR |
 | Отклонённый материал сохраняет `EvaluationResult` | контрактный тест Source Intelligence |
 | Оба уровня оценки (triage и полная) фиксируются телеметрией | контрактный тест телеметрии |
+| Каждый оценённый материал имеет `source_group_id` | контрактный тест Source Intelligence |
+| Материалы с совпадающими `canonical_url` или `content_hash` получают один `source_group_id` | контрактный тест дедупликации |
 
 ## Lifecycle
 
-Пересматривается по результатам evaluation Фазы 2 (калибровка характеристик) и при добавлении
-характеристик, требующих новых данных (в первую очередь — независимости источников).
+Пересматривается по результатам evaluation Фазы 2 (калибровка характеристик) и при переходе к
+полноценному source lineage — расширению эвристики `source_group_id` за пределы точного дублирования.
 
 ## Related Artifacts
 
