@@ -55,12 +55,9 @@ Monitoring` и `AM-2 Entity / Relationship Extraction` — с конфигури
 
 | Задача | Результат |
 | --- | --- |
-| T1.1 Исследование OSS-кандидатов по каждому компоненту | сравнительный отчёт в `docs/analysis/` |
-| T1.2 Ingestion на Crawl4AI + Trafilatura | сбор и нормализация источников |
-| T1.3 Extraction на LLM-извлечении | выдача, валидная по контракту извлечения |
-| T1.4 Эксперимент по графовой БД (Kuzu / Neo4j / PostgreSQL) | решение и обновление ADR-001 |
-| T1.5 Vector store и параллельная индексация | индексация того же материала |
-| T1.6 Оркестрация пайплайна | сквозной прогон одного направления |
+| P1-A Контракты и исполнимые Research Specifications | актуальные контракты ADR-004/005/006 и валидируемые профили AM-1/AM-2 |
+| P1-B Acquisition core | ingestion, extraction, evaluation и preservation из Research Specification |
+| P1-C Persistence, orchestration и end-to-end доказательство | graph/vector representations, Research Run и сквозные прогоны AM-1/AM-2 |
 
 **Definition of Done:** один прогон от источника до контекста проходит целиком; выдача Extraction
 проходит валидацию по [`extraction-contract`](standards/extraction-contract.md); выбор графовой БД
@@ -135,19 +132,16 @@ git; восстановление из резервной копии прове�
 | --- | --- | --- | --- |
 | T0.1 | закрыта настоящим PR | — | T0.2 |
 | T0.2 | закрыта настоящим PR | T0.1 | T0.3, T0.4 |
-| T0.3 | закрыта настоящим PR | T0.2 | [T1.1](https://github.com/G-Ivan-A/aether-orbis/issues/3) |
-| T0.4 | закрыта настоящим PR | T0.2 | [T1.3](https://github.com/G-Ivan-A/aether-orbis/issues/5), [T3.1](https://github.com/G-Ivan-A/aether-orbis/issues/14), [T3.2](https://github.com/G-Ivan-A/aether-orbis/issues/15), [T3.3](https://github.com/G-Ivan-A/aether-orbis/issues/16) |
-| T0.5 | закрыта настоящим PR | T0.2 | [T1.1](https://github.com/G-Ivan-A/aether-orbis/issues/3) |
-| T1.1 | [#3](https://github.com/G-Ivan-A/aether-orbis/issues/3) | T0.3, T0.5 | [T1.2](https://github.com/G-Ivan-A/aether-orbis/issues/4), [T1.4](https://github.com/G-Ivan-A/aether-orbis/issues/6), [T1.5](https://github.com/G-Ivan-A/aether-orbis/issues/7) |
-| T1.2 | [#4](https://github.com/G-Ivan-A/aether-orbis/issues/4) | [T1.1](https://github.com/G-Ivan-A/aether-orbis/issues/3) | [T1.3](https://github.com/G-Ivan-A/aether-orbis/issues/5) |
-| T1.3 | [#5](https://github.com/G-Ivan-A/aether-orbis/issues/5) | [T1.2](https://github.com/G-Ivan-A/aether-orbis/issues/4), T0.4 | [T1.6](https://github.com/G-Ivan-A/aether-orbis/issues/8) |
-| T1.4 | [#6](https://github.com/G-Ivan-A/aether-orbis/issues/6) | [T1.1](https://github.com/G-Ivan-A/aether-orbis/issues/3) | [T1.6](https://github.com/G-Ivan-A/aether-orbis/issues/8), [T5.2](https://github.com/G-Ivan-A/aether-orbis/issues/25) |
-| T1.5 | [#7](https://github.com/G-Ivan-A/aether-orbis/issues/7) | [T1.1](https://github.com/G-Ivan-A/aether-orbis/issues/3) | [T1.6](https://github.com/G-Ivan-A/aether-orbis/issues/8) |
-| T1.6 | [#8](https://github.com/G-Ivan-A/aether-orbis/issues/8) | [T1.3](https://github.com/G-Ivan-A/aether-orbis/issues/5), [T1.4](https://github.com/G-Ivan-A/aether-orbis/issues/6), [T1.5](https://github.com/G-Ivan-A/aether-orbis/issues/7) | [T2.1](https://github.com/G-Ivan-A/aether-orbis/issues/9), [T2.4](https://github.com/G-Ivan-A/aether-orbis/issues/12) |
-| T2.1 | [#9](https://github.com/G-Ivan-A/aether-orbis/issues/9) | [T1.6](https://github.com/G-Ivan-A/aether-orbis/issues/8) | [T2.2](https://github.com/G-Ivan-A/aether-orbis/issues/10), [T2.5](https://github.com/G-Ivan-A/aether-orbis/issues/13) |
+| T0.3 | закрыта настоящим PR | T0.2 | [P1-A](https://github.com/G-Ivan-A/aether-orbis/issues/35) |
+| T0.4 | закрыта настоящим PR | T0.2 | [P1-A](https://github.com/G-Ivan-A/aether-orbis/issues/35), [T3.1](https://github.com/G-Ivan-A/aether-orbis/issues/14), [T3.2](https://github.com/G-Ivan-A/aether-orbis/issues/15), [T3.3](https://github.com/G-Ivan-A/aether-orbis/issues/16) |
+| T0.5 | закрыта настоящим PR | T0.2 | [P1-A](https://github.com/G-Ivan-A/aether-orbis/issues/35) |
+| P1-A | [#35](https://github.com/G-Ivan-A/aether-orbis/issues/35) | T0.3, T0.4, T0.5 | [P1-B](https://github.com/G-Ivan-A/aether-orbis/issues/36) |
+| P1-B | [#36](https://github.com/G-Ivan-A/aether-orbis/issues/36) | [P1-A](https://github.com/G-Ivan-A/aether-orbis/issues/35) | [P1-C](https://github.com/G-Ivan-A/aether-orbis/issues/37) |
+| P1-C | [#37](https://github.com/G-Ivan-A/aether-orbis/issues/37) | [P1-B](https://github.com/G-Ivan-A/aether-orbis/issues/36) | [T2.1](https://github.com/G-Ivan-A/aether-orbis/issues/9), [T2.4](https://github.com/G-Ivan-A/aether-orbis/issues/12), [T5.2](https://github.com/G-Ivan-A/aether-orbis/issues/25) |
+| T2.1 | [#9](https://github.com/G-Ivan-A/aether-orbis/issues/9) | [P1-C](https://github.com/G-Ivan-A/aether-orbis/issues/37) | [T2.2](https://github.com/G-Ivan-A/aether-orbis/issues/10), [T2.5](https://github.com/G-Ivan-A/aether-orbis/issues/13) |
 | T2.2 | [#10](https://github.com/G-Ivan-A/aether-orbis/issues/10) | [T2.1](https://github.com/G-Ivan-A/aether-orbis/issues/9) | [T2.3](https://github.com/G-Ivan-A/aether-orbis/issues/11) |
 | T2.3 | [#11](https://github.com/G-Ivan-A/aether-orbis/issues/11) | [T2.2](https://github.com/G-Ivan-A/aether-orbis/issues/10) | [T3.1](https://github.com/G-Ivan-A/aether-orbis/issues/14) |
-| T2.4 | [#12](https://github.com/G-Ivan-A/aether-orbis/issues/12) | [T1.6](https://github.com/G-Ivan-A/aether-orbis/issues/8) | [T4.1](https://github.com/G-Ivan-A/aether-orbis/issues/20), [T4.2](https://github.com/G-Ivan-A/aether-orbis/issues/21) |
+| T2.4 | [#12](https://github.com/G-Ivan-A/aether-orbis/issues/12) | [P1-C](https://github.com/G-Ivan-A/aether-orbis/issues/37) | [T4.1](https://github.com/G-Ivan-A/aether-orbis/issues/20), [T4.2](https://github.com/G-Ivan-A/aether-orbis/issues/21) |
 | T2.5 | [#13](https://github.com/G-Ivan-A/aether-orbis/issues/13) | [T2.1](https://github.com/G-Ivan-A/aether-orbis/issues/9) | [T4.4](https://github.com/G-Ivan-A/aether-orbis/issues/23) |
 | T3.1 | [#14](https://github.com/G-Ivan-A/aether-orbis/issues/14) | T0.4, [T2.3](https://github.com/G-Ivan-A/aether-orbis/issues/11) | [T3.2](https://github.com/G-Ivan-A/aether-orbis/issues/15) |
 | T3.2 | [#15](https://github.com/G-Ivan-A/aether-orbis/issues/15) | [T3.1](https://github.com/G-Ivan-A/aether-orbis/issues/14) | [T3.4](https://github.com/G-Ivan-A/aether-orbis/issues/17), [T4.3](https://github.com/G-Ivan-A/aether-orbis/issues/22) |
@@ -160,7 +154,7 @@ git; восстановление из резервной копии прове�
 | T4.3 | [#22](https://github.com/G-Ivan-A/aether-orbis/issues/22) | [T3.2](https://github.com/G-Ivan-A/aether-orbis/issues/15) | [T5.5](https://github.com/G-Ivan-A/aether-orbis/issues/28) |
 | T4.4 | [#23](https://github.com/G-Ivan-A/aether-orbis/issues/23) | [T4.1](https://github.com/G-Ivan-A/aether-orbis/issues/20), [T4.2](https://github.com/G-Ivan-A/aether-orbis/issues/21), [T3.3](https://github.com/G-Ivan-A/aether-orbis/issues/16), [T2.5](https://github.com/G-Ivan-A/aether-orbis/issues/13) | [T5.5](https://github.com/G-Ivan-A/aether-orbis/issues/28) |
 | T5.1 | [#24](https://github.com/G-Ivan-A/aether-orbis/issues/24) | [T3.4](https://github.com/G-Ivan-A/aether-orbis/issues/17), [T3.5](https://github.com/G-Ivan-A/aether-orbis/issues/18) | [T5.3](https://github.com/G-Ivan-A/aether-orbis/issues/26) |
-| T5.2 | [#25](https://github.com/G-Ivan-A/aether-orbis/issues/25) | [T1.4](https://github.com/G-Ivan-A/aether-orbis/issues/6) | [T5.4](https://github.com/G-Ivan-A/aether-orbis/issues/27) |
+| T5.2 | [#25](https://github.com/G-Ivan-A/aether-orbis/issues/25) | [P1-C](https://github.com/G-Ivan-A/aether-orbis/issues/37) | [T5.4](https://github.com/G-Ivan-A/aether-orbis/issues/27) |
 | T5.3 | [#26](https://github.com/G-Ivan-A/aether-orbis/issues/26) | [T5.1](https://github.com/G-Ivan-A/aether-orbis/issues/24) | [T5.5](https://github.com/G-Ivan-A/aether-orbis/issues/28) |
 | T5.4 | [#27](https://github.com/G-Ivan-A/aether-orbis/issues/27) | [T5.2](https://github.com/G-Ivan-A/aether-orbis/issues/25) | [T5.5](https://github.com/G-Ivan-A/aether-orbis/issues/28) |
 | T5.5 | [#28](https://github.com/G-Ivan-A/aether-orbis/issues/28) | [T4.3](https://github.com/G-Ivan-A/aether-orbis/issues/22), [T4.4](https://github.com/G-Ivan-A/aether-orbis/issues/23), [T5.3](https://github.com/G-Ivan-A/aether-orbis/issues/26), [T5.4](https://github.com/G-Ivan-A/aether-orbis/issues/27) | — |
