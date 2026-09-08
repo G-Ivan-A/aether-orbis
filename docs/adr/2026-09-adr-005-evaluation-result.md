@@ -1,5 +1,5 @@
 ---
-status: proposed
+status: accepted
 version: 0.2
 updated: 2026-09-03
 temperature: 0.1
@@ -15,7 +15,7 @@ decision-type: product
 | --- | --- |
 | ADR id | ADR-005 |
 | Decision type | product |
-| Decision status | proposed |
+| Decision status | accepted |
 | Decision date | 2026-09-02 |
 | Owner | G-Ivan-A |
 | Source | [Анализ вариативности моделей Acquisition, § 6.4](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md); issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29); [решения фаундера по Q4 от 2026-09-03](https://github.com/G-Ivan-A/aether-orbis/pull/30#issuecomment-5521971261) |

@@ -36,8 +36,8 @@ flowchart TD
     RAW --> EXTR[Extraction<br/>entities, relations, claims<br/>+ evidence + confidence]
     EXTR --> RG{Relevance /<br/>Quality Gate}
 
-    RG -->|not_relevant| SI[(Source Intelligence<br/>метаданные + summary + причина)]
-    RG -->|relevant| GB[Graph / Context Builder]
+    RG -->|REJECTED| SI[(Source Intelligence<br/>preserved material according to<br/>Preservation Requirements)]
+    RG -->|QUALIFIED / CONDITIONAL<br/>по политике направления| GB[Graph / Context Builder]
 
     GB --> GRAPH[(Graph Store)]
     GB --> VEC[(Vector Index)]
@@ -100,7 +100,7 @@ graph TB
 | Зона | Владеет | Не имеет права |
 | --- | --- | --- |
 | Acquisition | сбором, хранением сырого материала, извлечением утверждений | строить граф, оценивать релевантность для задачи |
-| Selection | решением relevant / not_relevant и сохранением отброшенного | изменять содержимое claims |
+| Selection | решением `QUALIFIED` / `CONDITIONAL` / `REJECTED` и сохранением отклонённого материала | изменять содержимое claims |
 | Representation | решением, что становится ребром графа, и entity resolution | пере-извлекать данные из источника |
 | Decision | решением «достаточно / недостаточно / ZERO» | делать предметные выводы |
 | Consumption | рассуждением поверх контекста | обращаться к источникам напрямую в обход контракта |
@@ -109,20 +109,38 @@ graph TB
 Жёсткое правило: **Parser ≠ Graph Builder ≠ Analysis**. Флаг вида `--build-graph` внутри парсера
 отклонён как нарушение границы зон.
 
-## 4. Логика Relevance Gate
+## 4. Точки вариативности пайплайна
+
+Единый acquisition pipeline конфигурируется в четырёх контрактных точках:
+
+1. **Research Specification** — цель, target и стратегия frontier.
+2. **Evaluation Result + Decision Policy** — измеряемые характеристики и правила вывода решения.
+3. **Preservation Requirements** — состав сохраняемого материала и производного знания.
+4. **Termination / Sufficiency Policy** — условия завершения и статус исхода прогона.
+
+Это **контрактные точки вариативности**, а не отдельные runtime-компоненты. Компонентные границы и
+последовательность основного потока данных остаются общими для всех моделей Acquisition.
+
+## 5. Логика Relevance Gate
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Scoring
-    Scoring: оценка по критериям YAML-профиля
-    Scoring --> Relevant: score >= threshold
-    Scoring --> NotRelevant: score < threshold
-    Relevant --> [*]: в Graph / Context Builder
-    NotRelevant --> Archived: summary + метаданные + reason
-    Archived --> [*]: в Source Intelligence
+    [*] --> Evaluation
+    Evaluation: многомерная оценка относительно Research Specification
+    Evaluation --> EvaluationResult
+    EvaluationResult: именованные характеристики оценки
+    EvaluationResult --> DecisionPolicy
+    DecisionPolicy: политика квалифицирующего решения
+    DecisionPolicy --> Qualified: QUALIFIED
+    DecisionPolicy --> Conditional: CONDITIONAL
+    DecisionPolicy --> Rejected: REJECTED
+    Qualified --> [*]: в Graph / Context Builder
+    Conditional --> [*]: обработка по политике направления
+    Rejected --> Preserved: Source Intelligence / preserved material according to Preservation Requirements
+    Preserved --> [*]
 ```
 
-## 5. Логика Sufficiency Gate
+## 6. Логика Sufficiency Gate
 
 ```mermaid
 stateDiagram-v2
@@ -140,7 +158,7 @@ stateDiagram-v2
 Цикл `Insufficient → Expand → Evaluate` ограничен бюджетом итераций и бюджетом стоимости; выход по
 исчерпанию любого из них даёт `ZERO`, а не «лучшее из имеющегося».
 
-## 6. Экономика по ролям операций
+## 7. Экономика по ролям операций
 
 ```mermaid
 graph LR
@@ -156,7 +174,7 @@ graph LR
 Relevance Gate — главный рычаг экономики: он определяет, какая доля собранного вообще доходит до
 дорогого шага.
 
-## 7. Развёртывание
+## 8. Развёртывание
 
 ```mermaid
 graph TB
@@ -186,7 +204,7 @@ graph TB
 Обоснование serverless-first, требований юрисдикции РФ и обязательной 2FA — см.
 [ADR-003](adr/2026-08-adr-003-infrastructure.md).
 
-## 8. Граница репозитория и runtime
+## 9. Граница репозитория и runtime
 
 ```mermaid
 graph LR
@@ -206,7 +224,7 @@ graph LR
     RUNTIME -.->|никогда не коммитится| REPO
 ```
 
-## 9. Связанные артефакты
+## 10. Связанные артефакты
 
 - [`docs/concept.md`](concept.md) — компоненты и контракты
 - [`docs/standards/`](standards/) — контракты границ

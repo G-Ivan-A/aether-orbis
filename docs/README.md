@@ -20,6 +20,17 @@ temperature: 0.1
 | L2 | [`analysis/`](analysis/) | аналитические документы, обосновывающие изменения контрактов |
 | — | [`roadmap.md`](roadmap.md) | фазы 0–5, задачи и зависимости, риски |
 
+Ключевые документы, обосновывающие изменения контрактов:
+
+- [`analysis/2026-09-02-acquisition-models-variation.md`](analysis/2026-09-02-acquisition-models-variation.md)
+  — анализ вариативности моделей Acquisition.
+- [`adr/2026-09-adr-004-preservation-policy.md`](adr/2026-09-adr-004-preservation-policy.md) —
+  Preservation Policy.
+- [`adr/2026-09-adr-005-evaluation-result.md`](adr/2026-09-adr-005-evaluation-result.md) —
+  Evaluation Result и Decision Policy.
+- [`adr/2026-09-adr-006-research-specification.md`](adr/2026-09-adr-006-research-specification.md) —
+  Research Specification и исходы прогона.
+
 ## Контракты
 
 | Контракт | Граница |
