@@ -15,7 +15,7 @@
 - Нормативные контракты Research Specification и Preservation v1.0.
 - `docs/analysis/2026-09-02-acquisition-models-variation.md`: анализ репрезентативных моделей
   Research / Acquisition, минимальных различий контрактов и проверка гипотезы уровней сохранения.
-- Проекты ADR: ADR-004 (Preservation Policy), ADR-005 (Evaluation Result и decision layer),
+- Принятые решения ADR-004 (Preservation Policy), ADR-005 (Evaluation Result и decision layer),
   ADR-006 (обобщённая Research Specification и состояния исхода прогона).
 - Подготовительный R&D (фаза 0 роадмапа): структура репозитория по архетипу Spoke Хаба.
 - Документы уровней 1–2: `docs/vision.md`, `docs/concept.md`, `docs/architecture.md`.
