@@ -101,12 +101,17 @@
         "properties": {"operation_role": {"const": "extraction"}}
       },
       "then": {
-        "required": ["extraction"],
         "properties": {
           "evaluation": false,
           "qualification": false,
           "outcome": false
-        }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"enum": ["ok", "partial"]}}},
+            "then": {"required": ["extraction"]}
+          }
+        ]
       }
     },
     {
@@ -114,7 +119,6 @@
         "properties": {"operation_role": {"const": "triage"}}
       },
       "then": {
-        "required": ["evaluation"],
         "properties": {
           "extraction": false,
           "evaluation": {
@@ -122,7 +126,13 @@
           },
           "qualification": false,
           "outcome": false
-        }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"enum": ["ok", "partial"]}}},
+            "then": {"required": ["evaluation"]}
+          }
+        ]
       }
     },
     {
@@ -130,7 +140,6 @@
         "properties": {"operation_role": {"const": "full_evaluation"}}
       },
       "then": {
-        "required": ["evaluation"],
         "properties": {
           "extraction": false,
           "evaluation": {
@@ -138,7 +147,13 @@
           },
           "qualification": false,
           "outcome": false
-        }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"enum": ["ok", "partial"]}}},
+            "then": {"required": ["evaluation"]}
+          }
+        ]
       }
     },
     {
@@ -146,12 +161,17 @@
         "properties": {"operation_role": {"const": "qualification"}}
       },
       "then": {
-        "required": ["qualification"],
         "properties": {
           "extraction": false,
           "evaluation": false,
           "outcome": false
-        }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"enum": ["ok", "partial"]}}},
+            "then": {"required": ["qualification"]}
+          }
+        ]
       }
     },
     {
@@ -159,12 +179,17 @@
         "properties": {"operation_role": {"const": "run_outcome"}}
       },
       "then": {
-        "required": ["outcome"],
         "properties": {
           "extraction": false,
           "evaluation": false,
           "qualification": false
-        }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"enum": ["ok", "partial"]}}},
+            "then": {"required": ["outcome"]}
+          }
+        ]
       }
     },
     {

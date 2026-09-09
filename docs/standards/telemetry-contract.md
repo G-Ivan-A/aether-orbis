@@ -39,9 +39,11 @@ owner: G-Ivan-A
 
 `operation_role` **ДОЛЖНА** быть одной из `discovery`, `parsing`, `extraction`, `triage`,
 `full_evaluation`, `qualification`, `knowledge_building`, `run_outcome`. Роль определяет допустимый
-payload: `extraction`, `triage`, `full_evaluation`, `qualification` и `run_outcome` **ДОЛЖНЫ**
-содержать одноимённый доменный payload и **НЕ ДОЛЖНЫ** переносить payload другой роли. `triage` и
-`full_evaluation` **НЕ ДОЛЖНЫ** агрегироваться как одна неразличимая стадия.
+payload: успешные и частичные `extraction`, `triage`, `full_evaluation`, `qualification` и
+`run_outcome` **ДОЛЖНЫ** содержать одноимённый доменный payload и **НЕ ДОЛЖНЫ** переносить payload
+другой роли. Событие со `status: error` **МОЖЕТ** не иметь результата операции и фиксирует ошибку
+через `error_code`. `triage` и `full_evaluation` **НЕ ДОЛЖНЫ** агрегироваться как одна
+неразличимая стадия.
 
 ### O-3. Вызовы моделей
 
