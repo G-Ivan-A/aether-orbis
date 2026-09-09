@@ -1,20 +1,22 @@
 # AetherOrbis
 
-**Web Knowledge Acquisition Pipeline**: evidence-backed extraction with configurable relevance and
-sufficiency gates.
+**Web Knowledge Acquisition Pipeline**: evidence-backed extraction with configurable evaluation,
+preservation and sufficiency policies.
 
 AetherOrbis приобретает внешние источники, извлекает структурированные данные с сохранением
 происхождения, оценивает релевантность и достаточность собранного материала и передаёт результат
-аналитическому компоненту через формализованный контракт. Если материала недостаточно — система
-возвращает явный `ZERO`, а не додумывает недостающее.
+аналитическому компоненту через формализованный контракт. Прогон завершается объяснимым
+`SUFFICIENT`, `PARTIAL`, `ZERO`, `CONFLICT` или `EXHAUSTED`, а не додумывает недостающее.
 
 Spoke-репозиторий экосистемы
 [hybrid-Intelligence-lab](https://github.com/G-Ivan-A/hybrid-Intelligence-lab).
 
 ## Статус
 
-Подготовительный R&D (фаза 0 роадмапа). Репозиторий содержит структуру, документацию и контракты;
-реализация начинается с фазы 1 — см. [`docs/roadmap.md`](docs/roadmap.md).
+Основа контрактов P1-A реализована: JSON Schemas, позитивные и негативные fixtures, два исполняемых
+профиля Phase 1 (`AM-1`, `AM-2`), отдельная Runtime Configuration и примеры общей Research
+Specification для `AM-1`…`AM-5`. Acquisition runtime и end-to-end исполнение остаются задачами
+P1-B/P1-C — см. [`docs/roadmap.md`](docs/roadmap.md).
 
 ## С чего начать
 
@@ -30,8 +32,13 @@ Spoke-репозиторий экосистемы
 ## Пайплайн
 
 ```
-Sources → Ingestion → Raw Store → Extraction → Relevance Gate → Graph / Vector
-        → Sufficiency Gate → Analysis | ZERO
+Research Profile ─┐
+                  ├→ Research Run
+Runtime Config ───┘
+
+Sources → Acquisition → Extraction → EvaluationResult → Decision Policy
+        → Knowledge Product → Sufficiency Gate
+        → SUFFICIENT | PARTIAL | ZERO | CONFLICT | EXHAUSTED
 ```
 
 Телеметрия снимается на каждом переходе.
@@ -41,13 +48,24 @@ Sources → Ingestion → Raw Store → Extraction → Relevance Gate → Graph 
 | Путь | Содержимое |
 | --- | --- |
 | `docs/` | документация уровней 1–4, ADR, контракты |
-| `configs/` | YAML-конфигурации направлений исследования |
+| `configs/` | JSON Schemas, Research Profiles и отдельная Runtime Configuration |
 | `src/aether_orbis/` | исходный код (наполняется с фазы 1) |
-| `tests/` | тесты, включая контрактные |
+| `tests/` | контрактные unit tests и позитивные/негативные fixtures |
 | `tools/` | служебные скрипты, в т.ч. валидация именования файлов |
 | `experiments/` | экспериментальные скрипты |
-| `examples/` | примеры использования |
+| `examples/` | валидируемые Research Specification для AM-1…AM-5 |
 | `.github/workflows/` | CI |
+
+## Локальная проверка
+
+```bash
+python3 -m pip install --user -r requirements-dev.txt
+python3 tools/validate-contracts.py
+python3 -m unittest discover -s tests -v
+```
+
+Полный набор проверок указан в [`CONTRIBUTING.md`](CONTRIBUTING.md); схема Research Specification
+описана в [`docs/standards/research-specification-contract.md`](docs/standards/research-specification-contract.md).
 
 ## Границы репозитория
 

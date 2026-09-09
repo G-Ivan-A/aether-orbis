@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.2
-updated: 2026-09-02
+version: 0.3
+updated: 2026-09-09
 temperature: 0.1
 ---
 
@@ -35,11 +35,18 @@ temperature: 0.1
 
 | Контракт | Граница |
 | --- | --- |
+| [`standards/research-specification-contract.md`](standards/research-specification-contract.md) | постановка Research Run и разделение profile/runtime |
+| [`standards/preservation-contract.md`](standards/preservation-contract.md) | acquired artifact, derived knowledge и observation history |
 | [`standards/extraction-contract.md`](standards/extraction-contract.md) | Extraction → всё, что ниже |
-| [`standards/relevance-gate-contract.md`](standards/relevance-gate-contract.md) | Extraction → Graph / Context Builder |
-| [`standards/sufficiency-gate-contract.md`](standards/sufficiency-gate-contract.md) | Context → Analysis |
+| [`standards/relevance-gate-contract.md`](standards/relevance-gate-contract.md) | EvaluationResult → QualificationDecision |
+| [`standards/sufficiency-gate-contract.md`](standards/sufficiency-gate-contract.md) | Research Run → объяснимый outcome |
 | [`standards/telemetry-contract.md`](standards/telemetry-contract.md) | все компоненты → наблюдаемость |
 | [`standards/glossary.md`](standards/glossary.md) | единый источник истины по терминам |
+
+Машиночитаемый источник полей контрактов — [`configs/schemas/`](../configs/schemas/). Валидируемые
+примеры общей Research Specification для `AM-1`…`AM-5` находятся в
+[`examples/research-specifications/`](../examples/research-specifications/); только профили `AM-1`
+и `AM-2` в [`configs/directions/`](../configs/directions/) исполняемы в Phase 1.
 
 ## Правила именования файлов
 
