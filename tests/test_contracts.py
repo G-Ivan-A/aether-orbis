@@ -30,34 +30,76 @@ class ContractFixtureTests(unittest.TestCase):
 
     def test_invalid_fixtures_are_rejected(self):
         expected_cases = {
-            "evaluation-result.schema.json--confidence.yaml",
-            "evaluation-result.schema.json--missing-source-group.yaml",
-            "extraction-result.schema.json--confidence.yaml",
-            "preservation-policy.schema.json--archival-not-explicit.yaml",
-            "preservation-policy.schema.json--risk-not-accepted.yaml",
-            "preserved-record.schema.json--missing-identity.yaml",
-            "preserved-record.schema.json--payloads-despite-none.yaml",
-            "qualification-decision.schema.json--missing-matched-rule.yaml",
-            "research-profile.schema.json--am3-executable.yaml",
-            "research-profile.schema.json--full-history.yaml",
-            "research-profile.schema.json--mixed-runtime.yaml",
-            "research-profile.schema.json--relabelled-am3.yaml",
-            "research-run-outcome.schema.json--missing-explanation.yaml",
-            "research-specification.schema.json--missing-termination.yaml",
-            "research-specification.schema.json--undeclared-dimension.yaml",
-            "research-specification.schema.json--unknown-strategy.yaml",
-            "runtime-configuration.schema.json--mixed-research.yaml",
-            "telemetry-event.schema.json--confidence.yaml",
-            "telemetry-event.schema.json--qualification-missing-rule.yaml",
-            "telemetry-event.schema.json--triage-without-evaluation.yaml",
+            "evaluation-result.schema.json--confidence.yaml": "$.characteristics: 'confidence'",
+            "evaluation-result.schema.json--missing-source-group.yaml": (
+                "$.subject: 'source_group_id' is a required property"
+            ),
+            "extraction-result.schema.json--confidence.yaml": (
+                "Additional properties are not allowed ('confidence' was unexpected)"
+            ),
+            "preservation-policy.schema.json--archival-not-explicit.yaml": (
+                "$: 'profile' is a required property"
+            ),
+            "preservation-policy.schema.json--risk-not-accepted.yaml": (
+                "$: 'reproducibility_risk_accepted' is a required property"
+            ),
+            "preserved-record.schema.json--missing-identity.yaml": (
+                "$.identity: 'content_hash' is a required property"
+            ),
+            "preserved-record.schema.json--payloads-despite-none.yaml": (
+                "False schema does not allow"
+            ),
+            "qualification-decision.schema.json--missing-matched-rule.yaml": (
+                "$: 'matched_rule' is a required property"
+            ),
+            "research-profile.schema.json--am3-executable.yaml": (
+                "$.acquisition_model: 'AM-3' is not one of ['AM-1', 'AM-2']"
+            ),
+            "research-profile.schema.json--full-history.yaml": (
+                "$.specification.preservation.observation_history: 'latest_only' was expected"
+            ),
+            "research-profile.schema.json--mixed-runtime.yaml": (
+                "Additional properties are not allowed ('budgets' was unexpected)"
+            ),
+            "research-profile.schema.json--relabelled-am3.yaml": (
+                "is not valid under any of the given schemas"
+            ),
+            "research-run-outcome.schema.json--missing-explanation.yaml": (
+                "$: 'rationale' is a required property"
+            ),
+            "research-specification.schema.json--missing-termination.yaml": (
+                "$: 'termination' is a required property"
+            ),
+            "research-specification.schema.json--undeclared-dimension.yaml": (
+                "is not declared in evaluation.dimensions"
+            ),
+            "research-specification.schema.json--unknown-strategy.yaml": (
+                "$.scope:"
+            ),
+            "runtime-configuration.schema.json--mixed-research.yaml": (
+                "Additional properties are not allowed ('objective' was unexpected)"
+            ),
+            "telemetry-event.schema.json--confidence.yaml": (
+                "Additional properties are not allowed ('confidence' was unexpected)"
+            ),
+            "telemetry-event.schema.json--qualification-missing-rule.yaml": (
+                "$.qualification: 'matched_rule' is a required property"
+            ),
+            "telemetry-event.schema.json--triage-without-evaluation.yaml": (
+                "$: 'evaluation' is a required property"
+            ),
         }
         paths = sorted((FIXTURES / "invalid").glob("*.yaml"))
-        self.assertEqual(expected_cases, {path.name for path in paths})
+        self.assertEqual(set(expected_cases), {path.name for path in paths})
         for path in paths:
             with self.subTest(path=path.name):
                 schema_name, separator, _ = path.name.partition("--")
                 self.assertEqual("--", separator)
-                self.assertNotEqual([], validate_document(path, schema_name, SCHEMAS))
+                errors = validate_document(path, schema_name, SCHEMAS)
+                self.assertTrue(
+                    any(expected_cases[path.name] in error for error in errors),
+                    errors,
+                )
 
     def test_general_specifications_express_all_models_and_strategies(self):
         paths = sorted(
