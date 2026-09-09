@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.2
-updated: 2026-09-02
+version: 0.3
+updated: 2026-09-09
 temperature: 0.1
 ---
 
@@ -17,9 +17,9 @@ temperature: 0.1
 | ADR-001 | Технологический стек | product | proposed | [2026-08-adr-001-tech-stack.md](2026-08-adr-001-tech-stack.md) |
 | ADR-002 | Маршрутизация моделей по ролям операций | product | proposed | [2026-08-adr-002-model-routing.md](2026-08-adr-002-model-routing.md) |
 | ADR-003 | Инфраструктура: serverless-first с VPS fallback | runtime | proposed | [2026-08-adr-003-infrastructure.md](2026-08-adr-003-infrastructure.md) |
-| ADR-004 | Preservation Policy: независимые измерения вместо линейной шкалы | product | proposed | [2026-09-adr-004-preservation-policy.md](2026-09-adr-004-preservation-policy.md) |
-| ADR-005 | Evaluation Result и отделение decision layer | product | proposed | [2026-09-adr-005-evaluation-result.md](2026-09-adr-005-evaluation-result.md) |
-| ADR-006 | Обобщённая Research Specification и состояния исхода прогона | product | proposed | [2026-09-adr-006-research-specification.md](2026-09-adr-006-research-specification.md) |
+| ADR-004 | Preservation Policy: независимые измерения вместо линейной шкалы | product | accepted | [2026-09-adr-004-preservation-policy.md](2026-09-adr-004-preservation-policy.md) |
+| ADR-005 | Evaluation Result и отделение decision layer | product | accepted | [2026-09-adr-005-evaluation-result.md](2026-09-adr-005-evaluation-result.md) |
+| ADR-006 | Обобщённая Research Specification и состояния исхода прогона | product | accepted | [2026-09-adr-006-research-specification.md](2026-09-adr-006-research-specification.md) |
 
 ## Соответствие исходной постановке задачи
 
@@ -34,10 +34,10 @@ Issue [#1](https://github.com/G-Ivan-A/aether-orbis/issues/1) называет �
 | `docs/adr/002-model-routing.md` | [`2026-08-adr-002-model-routing.md`](2026-08-adr-002-model-routing.md) |
 | `docs/adr/003-infrastructure.md` | [`2026-08-adr-003-infrastructure.md`](2026-08-adr-003-infrastructure.md) |
 
-## Проекты ADR концептуального пересмотра (issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29))
+## Принятые ADR концептуального пересмотра (issue [#29](https://github.com/G-Ivan-A/aether-orbis/issues/29))
 
-ADR-004, ADR-005 и ADR-006 подготовлены как **проекты** на основании
+ADR-004, ADR-005 и ADR-006 приняты после review на основании
 [анализа вариативности моделей Acquisition](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-09-02-acquisition-models-variation.md).
-Изменения контрактов в
+Исполняемые изменения контрактов в
 [`docs/standards/`](https://github.com/G-Ivan-A/aether-orbis/tree/main/docs/standards)
-выполняются отдельной задачей и только после принятия соответствующего ADR.
+выполняются в рамках Phase 1 P1-A.
