@@ -81,7 +81,7 @@
     },
     "qualification": {
       "type": "object",
-      "required": ["decision", "policy_id", "policy_version"],
+      "required": ["decision", "policy_id", "policy_version", "matched_rule"],
       "properties": {
         "decision": {"enum": ["QUALIFIED", "CONDITIONAL", "REJECTED"]},
         "policy_id": {"type": "string", "minLength": 1},

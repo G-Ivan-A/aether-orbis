@@ -37,6 +37,7 @@ class ContractFixtureTests(unittest.TestCase):
             "preservation-policy.schema.json--risk-not-accepted.yaml",
             "preserved-record.schema.json--missing-identity.yaml",
             "preserved-record.schema.json--payloads-despite-none.yaml",
+            "qualification-decision.schema.json--missing-matched-rule.yaml",
             "research-profile.schema.json--am3-executable.yaml",
             "research-profile.schema.json--full-history.yaml",
             "research-profile.schema.json--mixed-runtime.yaml",
@@ -47,6 +48,7 @@ class ContractFixtureTests(unittest.TestCase):
             "research-specification.schema.json--unknown-strategy.yaml",
             "runtime-configuration.schema.json--mixed-research.yaml",
             "telemetry-event.schema.json--confidence.yaml",
+            "telemetry-event.schema.json--qualification-missing-rule.yaml",
             "telemetry-event.schema.json--triage-without-evaluation.yaml",
         }
         paths = sorted((FIXTURES / "invalid").glob("*.yaml"))

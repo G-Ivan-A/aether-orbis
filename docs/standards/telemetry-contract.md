@@ -60,7 +60,8 @@ entities/relations/claims,
 
 Evaluation-событие **ДОЛЖНО** фиксировать `stage` и открытую карту именованных `characteristics`.
 Qualification-событие **ДОЛЖНО** отдельно фиксировать `decision`, `policy_id`, `policy_version` и
-`matched_rule`. Измерение и решение **НЕ ДОЛЖНЫ** сливаться в единый score/threshold.
+`matched_rule`. `matched_rule` **ДОЛЖЕН** быть `null` при fallback. Измерение и решение **НЕ
+ДОЛЖНЫ** сливаться в единый score/threshold.
 
 ### O-6. Итог прогона
 

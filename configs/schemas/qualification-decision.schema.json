@@ -10,6 +10,7 @@
     "policy_id",
     "policy_version",
     "decision",
+    "matched_rule",
     "rationale",
     "decided_at"
   ],
