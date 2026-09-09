@@ -5,7 +5,7 @@ subject:
   source_id: source-001
   source_group_id: canonical:https://example.com/source/1
   canonical_url: https://example.com/source/1
-  content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b
+  content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b9d6f965ac832e40a5df6c06afe983e3b
 evaluation_stage: full
 characteristics:
   confidence:

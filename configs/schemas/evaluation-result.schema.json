@@ -25,7 +25,7 @@
         "canonical_url": {"type": "string", "format": "uri"},
         "content_hash": {
           "type": "string",
-          "pattern": "^sha256:[a-f0-9]{32,64}$"
+          "pattern": "^sha256:[a-f0-9]{64}$"
         }
       },
       "additionalProperties": false

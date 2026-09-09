@@ -1,5 +1,8 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
+
+import yaml
 
 from tools.contract_validation import (
     apply_decision_policy,
@@ -93,6 +96,43 @@ class ContractFixtureTests(unittest.TestCase):
         permissive = FIXTURES / "valid" / "decision-policy.schema.json--permissive.yaml"
         self.assertEqual("CONDITIONAL", apply_decision_policy(evaluation, strict))
         self.assertEqual("QUALIFIED", apply_decision_policy(evaluation, permissive))
+
+    def test_content_identity_requires_a_full_sha256_digest(self):
+        cases = (
+            (
+                "evaluation-result.schema.json--custom.yaml",
+                "evaluation-result.schema.json",
+                ("subject", "content_hash"),
+            ),
+            (
+                "extraction-result.schema.json--contradicted.yaml",
+                "extraction-result.schema.json",
+                ("source", "content_hash"),
+            ),
+            (
+                "preserved-record.schema.json--identity-with-none.yaml",
+                "preserved-record.schema.json",
+                ("identity", "content_hash"),
+            ),
+            (
+                "research-run.schema.json--complete.yaml",
+                "research-run.schema.json",
+                ("processed_sources", 0, "content_hash"),
+            ),
+        )
+        with TemporaryDirectory() as directory:
+            for fixture_name, schema_name, hash_path in cases:
+                with self.subTest(schema=schema_name):
+                    document = load_document(FIXTURES / "valid" / fixture_name)
+                    target = document
+                    for part in hash_path[:-1]:
+                        target = target[part]
+                    target[hash_path[-1]] = f"sha256:{'a' * 32}"
+                    path = Path(directory) / fixture_name
+                    path.write_text(yaml.safe_dump(document), encoding="utf-8")
+                    self.assertNotEqual(
+                        [], validate_document(path, schema_name, SCHEMAS)
+                    )
 
 
 if __name__ == "__main__":

@@ -66,7 +66,7 @@
       "properties": {
         "source_id": {"type": "string", "minLength": 1},
         "canonical_url": {"type": "string", "format": "uri"},
-        "content_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{32,64}$"},
+        "content_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
         "retrieved_at": {"type": "string", "format": "date-time"},
         "published_at": {"type": "string", "format": "date-time"},
         "parser_version": {"type": "string", "minLength": 1},
