@@ -31,12 +31,122 @@
       "if": {
         "properties": {
           "policy": {
+            "properties": {"acquired_artifact": {"const": "metadata"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"$ref": "#/$defs/acquired_metadata"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "summary"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"$ref": "#/$defs/acquired_summary"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "acquired_artifact": {"const": "evidence_fragments"}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {
+            "$ref": "#/$defs/acquired_evidence_fragments"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "full_content"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"$ref": "#/$defs/acquired_full_content"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
             "properties": {"derived_knowledge": {"const": "none"}}
           }
         }
       },
       "then": {"properties": {"derived_knowledge": false}},
       "else": {"required": ["derived_knowledge"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"derived_knowledge": {"const": "claims"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "derived_knowledge": {"$ref": "#/$defs/derived_claims"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "derived_knowledge": {"const": "claims_and_relations"}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "derived_knowledge": {
+            "$ref": "#/$defs/derived_claims_and_relations"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "derived_knowledge": {"const": "full_knowledge_product"}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "derived_knowledge": {
+            "$ref": "#/$defs/derived_full_knowledge_product"
+          }
+        }
+      }
     },
     {
       "if": {
@@ -52,6 +162,99 @@
     }
   ],
   "$defs": {
+    "metadata": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "knowledge_items": {
+      "type": "array",
+      "items": {"type": "object", "minProperties": 1}
+    },
+    "acquired_metadata": {
+      "type": "object",
+      "required": ["metadata"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"}
+      },
+      "additionalProperties": false
+    },
+    "acquired_summary": {
+      "type": "object",
+      "required": ["metadata", "summary"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"},
+        "summary": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "acquired_evidence_fragments": {
+      "type": "object",
+      "required": ["metadata", "summary", "evidence_fragments"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"},
+        "summary": {"type": "string", "minLength": 1},
+        "evidence_fragments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/evidence_fragment"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "acquired_full_content": {
+      "type": "object",
+      "required": ["metadata", "media_type", "content"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"},
+        "media_type": {"type": "string", "minLength": 1},
+        "content": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "evidence_fragment": {
+      "type": "object",
+      "required": ["fragment", "retrieved_at", "evidence_strength"],
+      "properties": {
+        "fragment": {"type": "string", "minLength": 1},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "evidence_strength": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "derived_claims": {
+      "type": "object",
+      "required": ["claims"],
+      "properties": {
+        "claims": {
+          "allOf": [
+            {"$ref": "#/$defs/knowledge_items"},
+            {"minItems": 1}
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "derived_claims_and_relations": {
+      "type": "object",
+      "required": ["claims", "relations"],
+      "properties": {
+        "claims": {"$ref": "#/$defs/knowledge_items"},
+        "relations": {"$ref": "#/$defs/knowledge_items"}
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {"properties": {"claims": {"minItems": 1}}},
+        {"properties": {"relations": {"minItems": 1}}}
+      ]
+    },
+    "derived_full_knowledge_product": {
+      "type": "object",
+      "required": ["knowledge_product"],
+      "properties": {
+        "knowledge_product": {"type": "object", "minProperties": 1}
+      },
+      "additionalProperties": false
+    },
     "source_identity": {
       "type": "object",
       "required": [

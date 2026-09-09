@@ -46,6 +46,9 @@ class ContractFixtureTests(unittest.TestCase):
             "preserved-record.schema.json--missing-identity.yaml": (
                 "$.identity: 'content_hash' is a required property"
             ),
+            "preserved-record.schema.json--over-retention.yaml": (
+                "Additional properties are not allowed ('full_content' was unexpected)"
+            ),
             "preserved-record.schema.json--payloads-despite-none.yaml": (
                 "False schema does not allow"
             ),

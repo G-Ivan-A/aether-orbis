@@ -41,6 +41,12 @@ Preservation Policy **ДОЛЖНА** задавать все три измере
 
 Выбор одного измерения **НЕ ДОЛЖЕН** неявно менять другое.
 
+Payload Preserved Record **ДОЛЖЕН** соответствовать выбранному уровню. `metadata` допускает только
+объект metadata; `summary` добавляет summary; `evidence_fragments` включает metadata, summary и
+проверяемые fragments; `full_content` содержит metadata, media type и полный content. Аналогично,
+`claims`, `claims_and_relations` и `full_knowledge_product` имеют закрытые разные формы. Payload
+более высокого уровня **НЕ ДОЛЖЕН** маскироваться политикой более низкого уровня.
+
 ### O-2. Инвариант идентичности и провенанса
 
 При любой комбинации, включая три значения `none`, Preserved Record **ДОЛЖЕН** содержать
@@ -83,12 +89,15 @@ Policy и Preserved Record **ДОЛЖНЫ** указывать `schema_version`.
 [`preservation-policy.schema.json--archival.yaml`](../../tests/fixtures/contracts/valid/preservation-policy.schema.json--archival.yaml),
 а инвариант идентичности при `none` — в
 [`preserved-record.schema.json--identity-with-none.yaml`](../../tests/fixtures/contracts/valid/preserved-record.schema.json--identity-with-none.yaml).
+Связь уровней с payload показана в
+[`preserved-record.schema.json--evidence-and-claims.yaml`](../../tests/fixtures/contracts/valid/preserved-record.schema.json--evidence-and-claims.yaml).
 
 ## Definition of Done / критерии соответствия
 
 | Критерий | Проверка |
 | --- | --- |
 | Три измерения обязательны и независимы | schema fixtures |
+| Уровни не допускают скрытого over-retention | позитивный и негативный Preserved Record fixture |
 | Идентичность сохраняется при `none` | позитивный и негативный Preserved Record fixture |
 | Экономия ниже evidence fragments требует принятия риска | негативный fixture |
 | `full_content` требует явного `archival` | позитивный и негативный fixtures |
