@@ -1,0 +1,19 @@
+schema_version: "1.0"
+event_id: event-run-outcome-001
+run_id: run-001
+profile_id: fixture-am2
+component: research-run
+operation_role: run_outcome
+started_at: "2026-09-09T12:00:20Z"
+finished_at: "2026-09-09T12:00:20Z"
+latency_ms: 1
+status: ok
+outcome:
+  schema_version: "1.0"
+  status: SUFFICIENT
+  coverage:
+    neighborhood_completeness: 0.9
+  gaps: []
+  conflicts: []
+  recommended_expansion: []
+  rationale: Every required dimension reached its success condition.

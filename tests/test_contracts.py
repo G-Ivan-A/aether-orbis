@@ -44,6 +44,7 @@ class ContractFixtureTests(unittest.TestCase):
             "research-specification.schema.json--unknown-strategy.yaml",
             "runtime-configuration.schema.json--mixed-research.yaml",
             "telemetry-event.schema.json--confidence.yaml",
+            "telemetry-event.schema.json--triage-without-evaluation.yaml",
         }
         paths = sorted((FIXTURES / "invalid").glob("*.yaml"))
         self.assertEqual(expected_cases, {path.name for path in paths})

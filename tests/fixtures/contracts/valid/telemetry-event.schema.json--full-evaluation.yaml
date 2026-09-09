@@ -21,8 +21,3 @@ evaluation:
   characteristics:
     source_authority: 0.8
     evidence_strength: 0.9
-qualification:
-  decision: QUALIFIED
-  policy_id: permissive-policy
-  policy_version: "1.0"
-  matched_rule: 0

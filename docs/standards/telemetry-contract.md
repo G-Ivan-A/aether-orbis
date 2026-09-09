@@ -38,8 +38,10 @@ owner: G-Ivan-A
 ### O-2. Роли операций
 
 `operation_role` **ДОЛЖНА** быть одной из `discovery`, `parsing`, `extraction`, `triage`,
-`full_evaluation`, `knowledge_building`. `triage` и `full_evaluation` **НЕ ДОЛЖНЫ** агрегироваться
-как одна неразличимая стадия.
+`full_evaluation`, `qualification`, `knowledge_building`, `run_outcome`. Роль определяет допустимый
+payload: `extraction`, `triage`, `full_evaluation`, `qualification` и `run_outcome` **ДОЛЖНЫ**
+содержать одноимённый доменный payload и **НЕ ДОЛЖНЫ** переносить payload другой роли. `triage` и
+`full_evaluation` **НЕ ДОЛЖНЫ** агрегироваться как одна неразличимая стадия.
 
 ### O-3. Вызовы моделей
 
@@ -49,7 +51,8 @@ owner: G-Ivan-A
 
 ### O-4. Раздельные extraction-метрики
 
-Extraction **МОЖЕТ** фиксировать число entities/relations/claims,
+Extraction-событие **ДОЛЖНО** содержать extraction payload и **МОЖЕТ** фиксировать в нём число
+entities/relations/claims,
 `mean_extraction_confidence` и `mean_evidence_strength`. Универсальный агрегат `confidence`
 **НЕ ДОЛЖЕН** существовать.
 
@@ -80,8 +83,10 @@ recommended expansion и rationale. Телеметрия **НЕ ДОЛЖНА** �
 
 Источник истины —
 [`telemetry-event.schema.json`](../../configs/schemas/telemetry-event.schema.json).
-Валидный пример полной оценки и отдельной квалификации:
-[`telemetry-event.schema.json--full-evaluation.yaml`](../../tests/fixtures/contracts/valid/telemetry-event.schema.json--full-evaluation.yaml).
+Валидные примеры полной оценки и отдельной квалификации:
+[`telemetry-event.schema.json--full-evaluation.yaml`](../../tests/fixtures/contracts/valid/telemetry-event.schema.json--full-evaluation.yaml)
+и
+[`telemetry-event.schema.json--qualification.yaml`](../../tests/fixtures/contracts/valid/telemetry-event.schema.json--qualification.yaml).
 
 ## Метрики по ролям
 
@@ -99,8 +104,8 @@ recommended expansion и rationale. Телеметрия **НЕ ДОЛЖНА** �
 | Критерий | Проверка |
 | --- | --- |
 | Событие валидно по закрытой схеме | schema fixture |
-| Triage и full evaluation различены | operation-role enum |
-| Evaluation и qualification раздельны | отдельные объекты схемы |
+| Triage и full evaluation различены | role-specific schema fixtures |
+| Evaluation и qualification раздельны | отдельные role-specific schema fixtures |
 | Универсальный `confidence` отклоняется | негативный fixture |
 | Все пять outcome доступны | ссылка на Research Run Outcome schema |
 | Секреты и runtime-логи не попадают в git | repository boundary/security checks |

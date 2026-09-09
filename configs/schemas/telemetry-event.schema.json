@@ -22,7 +22,16 @@
     "profile_id": {"type": "string", "minLength": 1},
     "component": {"type": "string", "minLength": 1},
     "operation_role": {
-      "enum": ["discovery", "parsing", "extraction", "triage", "full_evaluation", "knowledge_building"]
+      "enum": [
+        "discovery",
+        "parsing",
+        "extraction",
+        "triage",
+        "full_evaluation",
+        "qualification",
+        "knowledge_building",
+        "run_outcome"
+      ]
     },
     "started_at": {"type": "string", "format": "date-time"},
     "finished_at": {"type": "string", "format": "date-time"},
@@ -85,5 +94,95 @@
       "$ref": "https://aether-orbis.dev/schemas/research-run-outcome.schema.json"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {"operation_role": {"const": "extraction"}}
+      },
+      "then": {
+        "required": ["extraction"],
+        "properties": {
+          "evaluation": false,
+          "qualification": false,
+          "outcome": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"operation_role": {"const": "triage"}}
+      },
+      "then": {
+        "required": ["evaluation"],
+        "properties": {
+          "extraction": false,
+          "evaluation": {
+            "properties": {"stage": {"const": "triage"}}
+          },
+          "qualification": false,
+          "outcome": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"operation_role": {"const": "full_evaluation"}}
+      },
+      "then": {
+        "required": ["evaluation"],
+        "properties": {
+          "extraction": false,
+          "evaluation": {
+            "properties": {"stage": {"const": "full"}}
+          },
+          "qualification": false,
+          "outcome": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"operation_role": {"const": "qualification"}}
+      },
+      "then": {
+        "required": ["qualification"],
+        "properties": {
+          "extraction": false,
+          "evaluation": false,
+          "outcome": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"operation_role": {"const": "run_outcome"}}
+      },
+      "then": {
+        "required": ["outcome"],
+        "properties": {
+          "extraction": false,
+          "evaluation": false,
+          "qualification": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation_role": {
+            "enum": ["discovery", "parsing", "knowledge_building"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extraction": false,
+          "evaluation": false,
+          "qualification": false,
+          "outcome": false
+        }
+      }
+    }
+  ]
 }
