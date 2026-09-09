@@ -33,6 +33,7 @@ class ContractFixtureTests(unittest.TestCase):
             "preservation-policy.schema.json--archival-not-explicit.yaml",
             "preservation-policy.schema.json--risk-not-accepted.yaml",
             "preserved-record.schema.json--missing-identity.yaml",
+            "preserved-record.schema.json--payloads-despite-none.yaml",
             "research-profile.schema.json--am3-executable.yaml",
             "research-profile.schema.json--full-history.yaml",
             "research-profile.schema.json--mixed-runtime.yaml",

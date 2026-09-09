@@ -10,11 +10,47 @@
       "$ref": "https://aether-orbis.dev/schemas/preservation-policy.schema.json"
     },
     "identity": {"$ref": "#/$defs/source_identity"},
-    "acquired_artifact": {"type": "object"},
-    "derived_knowledge": {"type": "object"},
+    "acquired_artifact": {"type": "object", "minProperties": 1},
+    "derived_knowledge": {"type": "object", "minProperties": 1},
     "previous_record_id": {"type": "string", "minLength": 1}
   },
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "none"}}
+          }
+        }
+      },
+      "then": {"properties": {"acquired_artifact": false}},
+      "else": {"required": ["acquired_artifact"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"derived_knowledge": {"const": "none"}}
+          }
+        }
+      },
+      "then": {"properties": {"derived_knowledge": false}},
+      "else": {"required": ["derived_knowledge"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "observation_history": {"enum": ["none", "latest_only"]}
+            }
+          }
+        }
+      },
+      "then": {"properties": {"previous_record_id": false}}
+    }
+  ],
   "$defs": {
     "source_identity": {
       "type": "object",
