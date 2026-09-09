@@ -1,0 +1,22 @@
+schema_version: "1.0"
+policy:
+  schema_version: "1.0"
+  acquired_artifact: evidence_fragments
+  derived_knowledge: claims_and_relations
+  observation_history: latest_only
+identity:
+  source_id: source-empty
+  canonical_url: https://example.com/source/empty
+  content_hash: sha256:2d6f965ac832e40a5df6c06afe983e3b9d6f965ac832e40a5df6c06afe983e3b
+  retrieved_at: "2026-09-09T12:00:00Z"
+  published_at: "2026-09-08T09:00:00Z"
+  parser_version: "1.0.0"
+  extractor_version: "1.0.0"
+acquired_artifact:
+  metadata:
+    title: Empty example source
+  summary: The source contains no extractable evidence.
+  evidence_fragments: []
+derived_knowledge:
+  claims: []
+  relations: []

@@ -195,7 +195,6 @@
         "summary": {"type": "string", "minLength": 1},
         "evidence_fragments": {
           "type": "array",
-          "minItems": 1,
           "items": {"$ref": "#/$defs/evidence_fragment"}
         }
       },
@@ -225,12 +224,7 @@
       "type": "object",
       "required": ["claims"],
       "properties": {
-        "claims": {
-          "allOf": [
-            {"$ref": "#/$defs/knowledge_items"},
-            {"minItems": 1}
-          ]
-        }
+        "claims": {"$ref": "#/$defs/knowledge_items"}
       },
       "additionalProperties": false
     },
@@ -241,11 +235,7 @@
         "claims": {"$ref": "#/$defs/knowledge_items"},
         "relations": {"$ref": "#/$defs/knowledge_items"}
       },
-      "additionalProperties": false,
-      "anyOf": [
-        {"properties": {"claims": {"minItems": 1}}},
-        {"properties": {"relations": {"minItems": 1}}}
-      ]
+      "additionalProperties": false
     },
     "derived_full_knowledge_product": {
       "type": "object",
