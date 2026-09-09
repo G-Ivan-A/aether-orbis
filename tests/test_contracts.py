@@ -36,6 +36,7 @@ class ContractFixtureTests(unittest.TestCase):
             "research-profile.schema.json--am3-executable.yaml",
             "research-profile.schema.json--full-history.yaml",
             "research-profile.schema.json--mixed-runtime.yaml",
+            "research-profile.schema.json--relabelled-am3.yaml",
             "research-run-outcome.schema.json--missing-explanation.yaml",
             "research-specification.schema.json--missing-termination.yaml",
             "research-specification.schema.json--undeclared-dimension.yaml",

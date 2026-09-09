@@ -40,21 +40,75 @@
         }
       },
       "then": {
-        "properties": {
-          "acquisition_model": {"enum": ["AM-1", "AM-2"]},
-          "specification": {
-            "type": "object",
+        "allOf": [
+          {
             "properties": {
               "acquisition_model": {"enum": ["AM-1", "AM-2"]},
-              "preservation": {
+              "specification": {
                 "type": "object",
                 "properties": {
-                  "observation_history": {"const": "latest_only"}
+                  "acquisition_model": {"enum": ["AM-1", "AM-2"]},
+                  "preservation": {
+                    "type": "object",
+                    "properties": {
+                      "observation_history": {"const": "latest_only"}
+                    }
+                  }
                 }
               }
             }
+          },
+          {
+            "oneOf": [
+              {
+                "properties": {
+                  "acquisition_model": {"const": "AM-1"},
+                  "specification": {
+                    "properties": {
+                      "acquisition_model": {"const": "AM-1"},
+                      "objective": {
+                        "properties": {
+                          "expected_knowledge_product": {
+                            "const": "classified_publications"
+                          }
+                        }
+                      },
+                      "target": {
+                        "properties": {"type": {"const": "topics"}}
+                      },
+                      "scope": {
+                        "properties": {"strategy": {"const": "enumerate"}}
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "acquisition_model": {"const": "AM-2"},
+                  "specification": {
+                    "properties": {
+                      "acquisition_model": {"const": "AM-2"},
+                      "objective": {
+                        "properties": {
+                          "expected_knowledge_product": {
+                            "const": "entity_relationship_graph"
+                          }
+                        }
+                      },
+                      "target": {
+                        "properties": {"type": {"const": "entities"}}
+                      },
+                      "scope": {
+                        "properties": {"strategy": {"const": "expand"}}
+                      }
+                    }
+                  }
+                }
+              }
+            ]
           }
-        }
+        ]
       }
     }
   ]

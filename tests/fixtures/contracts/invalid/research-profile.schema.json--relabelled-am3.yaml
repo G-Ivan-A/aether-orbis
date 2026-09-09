@@ -1,0 +1,57 @@
+schema_version: "1.0"
+profile_id: relabelled-am3
+profile_version: "1.0"
+phase: 1
+support: executable
+acquisition_model: AM-1
+specification:
+  schema_version: "1.0"
+  specification_id: relabelled-am3-spec
+  specification_version: "1.0"
+  acquisition_model: AM-1
+  objective:
+    statement: Hide a question-driven profile behind an AM-1 label.
+    expected_knowledge_product: evidence_backed_answers
+  target:
+    type: questions
+    questions:
+      - Does relabeling bypass Phase 1 support constraints?
+  scope:
+    strategy: query
+    frontier:
+      source_types:
+        - web_search
+      query_templates:
+        - phase 1 support
+    source_types:
+      - web_page
+    time_window:
+      mode: current
+  evaluation:
+    dimensions:
+      - topic_match
+    decision_policy:
+      schema_version: "1.0"
+      policy_id: relabelled-am3-policy
+      policy_version: "1.0"
+      rules:
+        - decision: QUALIFIED
+          all:
+            - dimension: topic_match
+              operator: gte
+              value: 0.7
+      fallback: REJECTED
+  preservation:
+    schema_version: "1.0"
+    acquired_artifact: evidence_fragments
+    derived_knowledge: claims
+    observation_history: latest_only
+  termination:
+    completion_dimensions:
+      - question_coverage
+    success_conditions:
+      - dimension: question_coverage
+        operator: gte
+        value: 1.0
+    stop_conditions:
+      - frontier_exhausted
