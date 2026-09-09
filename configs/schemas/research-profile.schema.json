@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/research-profile.schema.json",
+  "title": "Phase 1 Executable Research Profile",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "profile_id",
+    "profile_version",
+    "phase",
+    "support",
+    "acquisition_model",
+    "specification"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "profile_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+    },
+    "phase": {"const": 1},
+    "support": {"const": "executable"},
+    "acquisition_model": {"enum": ["AM-1", "AM-2", "AM-3", "AM-4", "AM-5"]},
+    "specification": {
+      "$ref": "https://aether-orbis.dev/schemas/research-specification.schema.json"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": ["phase", "support"],
+        "properties": {
+          "phase": {"const": 1},
+          "support": {"const": "executable"}
+        }
+      },
+      "then": {
+        "properties": {
+          "acquisition_model": {"enum": ["AM-1", "AM-2"]},
+          "specification": {
+            "type": "object",
+            "properties": {
+              "acquisition_model": {"enum": ["AM-1", "AM-2"]},
+              "preservation": {
+                "type": "object",
+                "properties": {
+                  "observation_history": {"const": "latest_only"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

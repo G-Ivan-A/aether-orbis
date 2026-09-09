@@ -1,0 +1,15 @@
+schema_version: "1.0"
+policy:
+  schema_version: "1.0"
+  acquired_artifact: none
+  derived_knowledge: none
+  observation_history: none
+  reproducibility_risk_accepted: true
+identity:
+  source_id: source-001
+  canonical_url: https://example.com/source/1
+  content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b
+  retrieved_at: "2026-09-09T12:00:00Z"
+  published_at: "2026-09-08T09:00:00Z"
+  parser_version: "1.0.0"
+  extractor_version: "1.0.0"

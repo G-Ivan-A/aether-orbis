@@ -1,0 +1,10 @@
+schema_version: "1.0"
+status: EXHAUSTED
+coverage:
+  neighborhood_completeness: 0.55
+gaps:
+  - The second-degree relationship frontier remains incomplete.
+conflicts: []
+recommended_expansion:
+  - Increase the separately owned runtime budget before another run.
+rationale: The configured frontier budget ended before sufficiency was reached.

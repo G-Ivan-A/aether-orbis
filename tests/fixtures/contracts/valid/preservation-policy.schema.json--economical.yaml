@@ -1,0 +1,5 @@
+schema_version: "1.0"
+profile: monitoring
+acquired_artifact: evidence_fragments
+derived_knowledge: claims
+observation_history: latest_only

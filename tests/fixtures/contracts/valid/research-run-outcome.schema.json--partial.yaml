@@ -1,0 +1,10 @@
+schema_version: "1.0"
+status: PARTIAL
+coverage:
+  question_coverage: 0.6
+gaps:
+  - Independent evidence is missing for one required dimension.
+conflicts: []
+recommended_expansion:
+  - Query an independent registry for the uncovered dimension.
+rationale: Some dimensions are supported, but the specification is not fully covered.

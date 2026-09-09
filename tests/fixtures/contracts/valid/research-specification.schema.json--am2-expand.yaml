@@ -1,0 +1,73 @@
+schema_version: "1.0"
+specification_id: am2-reputation-relations
+specification_version: "1.0"
+acquisition_model: AM-2
+objective:
+  statement: Build an evidence-backed relationship neighborhood for reputation engineering entities.
+  expected_knowledge_product: entity_relationship_graph
+target:
+  type: entities
+  seed_entities:
+    - Global Reputation Alliance
+  relation_types:
+    - member_of
+    - partnered_with
+scope:
+  strategy: expand
+  frontier:
+    seeds:
+      - Global Reputation Alliance
+    relation_hints:
+      - member
+      - partner
+  source_types:
+    - organization_site
+    - registry
+  time_window:
+    mode: current
+evaluation:
+  dimensions:
+    - evidence_quality
+    - source_quality
+    - independence
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am2-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: evidence_quality
+            operator: gte
+            value: 0.8
+          - dimension: source_quality
+            operator: gte
+            value: 0.7
+      - decision: CONDITIONAL
+        all:
+          - dimension: evidence_quality
+            operator: gte
+            value: 0.6
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  profile: graph
+  acquired_artifact: metadata
+  derived_knowledge: full_knowledge_product
+  observation_history: latest_only
+  reproducibility_risk_accepted: true
+termination:
+  completion_dimensions:
+    - neighborhood_completeness
+    - new_entity_saturation
+  success_conditions:
+    - dimension: neighborhood_completeness
+      operator: gte
+      value: 0.85
+    - dimension: new_entity_saturation
+      operator: lte
+      value: 0.05
+  stop_conditions:
+    - frontier_exhausted
+    - budget_exhausted
+    - no_progress

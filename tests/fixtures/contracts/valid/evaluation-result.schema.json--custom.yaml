@@ -1,0 +1,20 @@
+schema_version: "1.0"
+evaluation_id: evaluation-001
+specification_id: am1-hub-monitoring
+subject:
+  source_id: source-001
+  source_group_id: canonical:https://example.com/source/1
+  canonical_url: https://example.com/source/1
+  content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b
+evaluation_stage: full
+characteristics:
+  topic_match:
+    score: 0.8
+    rationale: The source directly addresses the monitored topic.
+  source_quality:
+    score: 0.65
+    rationale: The author is identified and the evidence is inspectable.
+  recency:
+    score: 0.95
+    rationale: The source was published inside the active window.
+evaluated_at: "2026-09-09T12:00:10Z"

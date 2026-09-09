@@ -1,0 +1,28 @@
+schema_version: "1.0"
+event_id: event-001
+run_id: run-001
+profile_id: fixture-am2
+component: evaluation
+operation_role: full_evaluation
+started_at: "2026-09-09T12:00:06Z"
+finished_at: "2026-09-09T12:00:10Z"
+latency_ms: 4000
+status: ok
+model_call:
+  provider: example-provider
+  model: evaluation-model-1
+  tokens_in: 500
+  tokens_out: 100
+  cached_tokens: 200
+  cost_rub: 2.5
+  batch: false
+evaluation:
+  stage: full
+  characteristics:
+    source_authority: 0.8
+    evidence_strength: 0.9
+qualification:
+  decision: QUALIFIED
+  policy_id: permissive-policy
+  policy_version: "1.0"
+  matched_rule: 0

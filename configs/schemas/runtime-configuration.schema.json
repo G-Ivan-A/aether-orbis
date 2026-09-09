@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/runtime-configuration.schema.json",
+  "title": "Runtime Configuration",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "runtime_id",
+    "runtime_version",
+    "models",
+    "workers",
+    "stores",
+    "budgets",
+    "retries"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "runtime_id": {"$ref": "#/$defs/identifier"},
+    "runtime_version": {"$ref": "#/$defs/version"},
+    "models": {
+      "type": "object",
+      "required": ["extraction", "triage", "full_evaluation", "knowledge_building"],
+      "properties": {
+        "extraction": {"type": "string", "minLength": 1},
+        "triage": {"type": "string", "minLength": 1},
+        "full_evaluation": {"type": "string", "minLength": 1},
+        "knowledge_building": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "workers": {
+      "type": "object",
+      "required": ["concurrency"],
+      "properties": {
+        "concurrency": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "stores": {
+      "type": "object",
+      "required": ["source", "knowledge", "retrieval"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "knowledge": {"type": "string", "minLength": 1},
+        "retrieval": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "budgets": {
+      "type": "object",
+      "required": ["max_iterations", "max_cost_rub"],
+      "properties": {
+        "max_iterations": {"type": "integer", "minimum": 1},
+        "max_cost_rub": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "retries": {
+      "type": "object",
+      "required": ["max_attempts"],
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+    }
+  }
+}

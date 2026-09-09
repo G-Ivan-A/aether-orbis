@@ -1,0 +1,5 @@
+schema_version: "1.0"
+profile: graph
+acquired_artifact: metadata
+derived_knowledge: full_knowledge_product
+observation_history: latest_only

@@ -1,0 +1,13 @@
+schema_version: "1.0"
+event_id: event-invalid
+run_id: run-001
+profile_id: fixture-am2
+component: extraction
+operation_role: extraction
+started_at: "2026-09-09T12:00:06Z"
+finished_at: "2026-09-09T12:00:10Z"
+latency_ms: 4000
+status: ok
+confidence:
+  mean: 0.9
+  minimum: 0.8

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/preserved-record.schema.json",
+  "title": "Preserved Record",
+  "type": "object",
+  "required": ["schema_version", "policy", "identity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy": {
+      "$ref": "https://aether-orbis.dev/schemas/preservation-policy.schema.json"
+    },
+    "identity": {"$ref": "#/$defs/source_identity"},
+    "acquired_artifact": {"type": "object"},
+    "derived_knowledge": {"type": "object"},
+    "previous_record_id": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "source_identity": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "canonical_url",
+        "content_hash",
+        "retrieved_at",
+        "published_at",
+        "parser_version",
+        "extractor_version"
+      ],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "canonical_url": {"type": "string", "format": "uri"},
+        "content_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{32,64}$"},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "published_at": {"type": "string", "format": "date-time"},
+        "parser_version": {"type": "string", "minLength": 1},
+        "extractor_version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

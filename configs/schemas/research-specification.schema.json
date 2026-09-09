@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/research-specification.schema.json",
+  "title": "Research Specification",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "specification_id",
+    "specification_version",
+    "acquisition_model",
+    "objective",
+    "target",
+    "scope",
+    "evaluation",
+    "preservation",
+    "termination"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "specification_id": {"$ref": "#/$defs/identifier"},
+    "specification_version": {"$ref": "#/$defs/version"},
+    "acquisition_model": {"enum": ["AM-1", "AM-2", "AM-3", "AM-4", "AM-5"]},
+    "objective": {"$ref": "#/$defs/objective"},
+    "target": {"$ref": "#/$defs/target"},
+    "scope": {"$ref": "#/$defs/scope"},
+    "evaluation": {"$ref": "#/$defs/evaluation"},
+    "preservation": {
+      "$ref": "https://aether-orbis.dev/schemas/preservation-policy.schema.json"
+    },
+    "termination": {"$ref": "#/$defs/termination"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+(?:\\.[0-9]+)?$"
+    },
+    "dimension": {
+      "type": "string",
+      "pattern": "^(?!confidence$)[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
+    },
+    "string_list": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "objective": {
+      "type": "object",
+      "required": ["statement", "expected_knowledge_product"],
+      "properties": {
+        "statement": {"type": "string", "minLength": 1},
+        "expected_knowledge_product": {
+          "enum": [
+            "classified_publications",
+            "entity_relationship_graph",
+            "evidence_backed_answers",
+            "property_change_set",
+            "discovery_candidates"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "target": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "topics"],
+          "properties": {
+            "type": {"const": "topics"},
+            "topics": {"$ref": "#/$defs/string_list"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "seed_entities", "relation_types"],
+          "properties": {
+            "type": {"const": "entities"},
+            "seed_entities": {"$ref": "#/$defs/string_list"},
+            "relation_types": {"$ref": "#/$defs/string_list"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "questions"],
+          "properties": {
+            "type": {"const": "questions"},
+            "questions": {"$ref": "#/$defs/string_list"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "objects", "properties"],
+          "properties": {
+            "type": {"const": "observations"},
+            "objects": {"$ref": "#/$defs/string_list"},
+            "properties": {"$ref": "#/$defs/string_list"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["type", "criteria", "baseline"],
+          "properties": {
+            "type": {"const": "novelty"},
+            "criteria": {"$ref": "#/$defs/string_list"},
+            "baseline": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "time_window": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["mode"],
+          "properties": {"mode": {"enum": ["current", "since_last_run", "continuous"]}},
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["mode", "start", "end"],
+          "properties": {
+            "mode": {"const": "bounded"},
+            "start": {"type": "string", "format": "date-time"},
+            "end": {"type": "string", "format": "date-time"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "scope": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["strategy", "frontier", "source_types", "time_window"],
+          "properties": {
+            "strategy": {"const": "enumerate"},
+            "frontier": {
+              "type": "object",
+              "required": ["items"],
+              "properties": {"items": {"$ref": "#/$defs/string_list"}},
+              "additionalProperties": false
+            },
+            "source_types": {"$ref": "#/$defs/string_list"},
+            "time_window": {"$ref": "#/$defs/time_window"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["strategy", "frontier", "source_types", "time_window"],
+          "properties": {
+            "strategy": {"const": "expand"},
+            "frontier": {
+              "type": "object",
+              "required": ["seeds"],
+              "properties": {
+                "seeds": {"$ref": "#/$defs/string_list"},
+                "relation_hints": {"$ref": "#/$defs/string_list"}
+              },
+              "additionalProperties": false
+            },
+            "source_types": {"$ref": "#/$defs/string_list"},
+            "time_window": {"$ref": "#/$defs/time_window"}
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["strategy", "frontier", "source_types", "time_window"],
+          "properties": {
+            "strategy": {"const": "query"},
+            "frontier": {
+              "type": "object",
+              "required": ["source_types", "query_templates"],
+              "properties": {
+                "source_types": {"$ref": "#/$defs/string_list"},
+                "query_templates": {"$ref": "#/$defs/string_list"}
+              },
+              "additionalProperties": false
+            },
+            "source_types": {"$ref": "#/$defs/string_list"},
+            "time_window": {"$ref": "#/$defs/time_window"}
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["dimensions", "decision_policy"],
+      "properties": {
+        "dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/dimension"}
+        },
+        "decision_policy": {
+          "$ref": "https://aether-orbis.dev/schemas/decision-policy.schema.json"
+        }
+      },
+      "additionalProperties": false
+    },
+    "condition": {
+      "type": "object",
+      "required": ["dimension", "operator", "value"],
+      "properties": {
+        "dimension": {"$ref": "#/$defs/dimension"},
+        "operator": {"enum": ["gte", "gt", "lte", "lt", "eq"]},
+        "value": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "termination": {
+      "type": "object",
+      "required": ["completion_dimensions", "success_conditions", "stop_conditions"],
+      "properties": {
+        "completion_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/dimension"}
+        },
+        "success_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/condition"}
+        },
+        "stop_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "window_complete",
+              "frontier_exhausted",
+              "budget_exhausted",
+              "no_progress",
+              "novelty_saturated"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
