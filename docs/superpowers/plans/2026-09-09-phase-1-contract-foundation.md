@@ -99,7 +99,6 @@ import unittest
 from tools.contract_validation import (
     apply_decision_policy,
     validate_document,
-    validate_repository,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -125,8 +124,6 @@ class ContractFixtureTests(unittest.TestCase):
         self.assertEqual("CONDITIONAL", apply_decision_policy(evaluation, strict))
         self.assertEqual("QUALIFIED", apply_decision_policy(evaluation, permissive))
 
-    def test_tracked_profiles_examples_and_runtime_config_are_valid(self):
-        self.assertEqual([], validate_repository(ROOT))
 ```
 
 - [ ] **Step 3: Add literal fixtures covering every required behavior**
@@ -311,7 +308,8 @@ python3 -m unittest discover -s tests -v
 python3 tools/validate-contracts.py
 ```
 
-Expected: tests pass; repository validation still reports the two legacy profiles until Task 3.
+Expected: all schema-fixture and decision-policy tests pass. Running the repository validation CLI
+still reports the two legacy profiles until Task 3.
 Temporarily change a valid fixture to `confidence`, `full_history`, and a mixed runtime key one at a
 time; confirm the corresponding test fails, then restore each fixture.
 
@@ -338,6 +336,20 @@ time; confirm the corresponding test fails, then restore each fixture.
   expressibility examples.
 
 - [ ] **Step 1: Replace the two flat profiles**
+
+First add the repository-level acceptance test and run it against the legacy profiles:
+
+```python
+from tools.contract_validation import validate_repository
+
+
+def test_tracked_profiles_examples_and_runtime_config_are_valid(self):
+    self.assertEqual([], validate_repository(ROOT))
+```
+
+Run `python3 -m unittest tests.test_contracts.ContractFixtureTests.test_tracked_profiles_examples_and_runtime_config_are_valid -v`.
+Expected: FAIL with path-qualified validation errors for both legacy profiles. Then replace the
+profiles and add the remaining tracked artifacts below.
 
 Each profile has this exact outer structure and all six explicit specification blocks:
 
