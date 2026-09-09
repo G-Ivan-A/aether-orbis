@@ -78,8 +78,9 @@ Specification. Универсальный набор критериев или �
 ### O-7. Research Run и версии
 
 Research Run **ДОЛЖЕН** фиксировать версии спецификации, Runtime Configuration и моделей,
-processed content identities, решения, итерации, фактический бюджет и outcome. Несовместимое
-изменение схемы outcome/run **ДОЛЖНО** повышать мажорную версию.
+processed content identities, полные Qualification Decision с versioned policy и matched rule,
+итерации, фактический бюджет и outcome. Несовместимое изменение схемы outcome/run **ДОЛЖНО**
+повышать мажорную версию.
 
 ### O-8. Телеметрия
 
@@ -107,7 +108,7 @@ processed content identities, решения, итерации, фактичес
 | Gaps обязательны для partial/zero/exhausted | условные ограничения схемы |
 | Conflict содержит независимые группы | условное ограничение и fixture |
 | Runtime budget не смешан со спецификацией | закрытые схемы смешения |
-| Run фиксирует версии, identities, решения и бюджет | Research Run fixture |
+| Run фиксирует версии, identities, полные audit-ready решения и бюджет | позитивный и негативный Research Run fixture |
 
 ## Эскалация и исключения
 

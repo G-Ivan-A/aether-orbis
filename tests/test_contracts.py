@@ -67,6 +67,9 @@ class ContractFixtureTests(unittest.TestCase):
             "research-profile.schema.json--relabelled-am3.yaml": (
                 "is not valid under any of the given schemas"
             ),
+            "research-run.schema.json--incomplete-decision-audit.yaml": (
+                "'decision_id' is a required property"
+            ),
             "research-run-outcome.schema.json--missing-explanation.yaml": (
                 "$: 'rationale' is a required property"
             ),

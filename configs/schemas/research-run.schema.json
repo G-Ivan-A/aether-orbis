@@ -42,14 +42,7 @@
     "decisions": {
       "type": "array",
       "items": {
-        "type": "object",
-        "required": ["evaluation_id", "decision", "rationale"],
-        "properties": {
-          "evaluation_id": {"type": "string", "minLength": 1},
-          "decision": {"enum": ["QUALIFIED", "CONDITIONAL", "REJECTED"]},
-          "rationale": {"type": "string", "minLength": 1}
-        },
-        "additionalProperties": false
+        "$ref": "https://aether-orbis.dev/schemas/qualification-decision.schema.json"
       }
     },
     "expansion_iterations": {
