@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.3
-updated: 2026-09-09
+version: 0.4
+updated: 2026-09-10
 temperature: 0.1
 ---
 
@@ -18,6 +18,7 @@ temperature: 0.1
 | L4 | [`adr/README.md`](adr/README.md) | реестр архитектурных решений |
 | L4 | [`standards/`](standards/) | контракты границ компонентов |
 | L2 | [`analysis/`](analysis/) | аналитические документы, обосновывающие изменения контрактов |
+| — | [`running-locally.md`](running-locally.md) | точные команды локального прогона и границы фазы 1 |
 | — | [`roadmap.md`](roadmap.md) | фазы 0–5, задачи и зависимости, риски |
 
 Ключевые документы, обосновывающие изменения контрактов:
