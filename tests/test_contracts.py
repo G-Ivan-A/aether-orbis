@@ -1,3 +1,5 @@
+from tests import paths as paths  # noqa: F401
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest

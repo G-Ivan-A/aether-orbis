@@ -1,5 +1,7 @@
 """The frontier comes from the specification and from nothing else."""
 
+from tests import paths as paths  # noqa: F401
+
 import unittest
 
 from aether_orbis.errors import SpecificationError

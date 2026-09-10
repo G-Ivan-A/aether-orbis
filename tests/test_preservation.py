@@ -1,5 +1,7 @@
 """Preservation follows the policy only — not the source type, not the decision."""
 
+from tests import paths as paths  # noqa: F401
+
 import itertools
 import unittest
 

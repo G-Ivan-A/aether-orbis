@@ -1,5 +1,7 @@
 """Extraction keeps only evidence that occurs verbatim in the source."""
 
+from tests import paths as paths  # noqa: F401
+
 import unittest
 
 from aether_orbis.adapters import DictionaryExtractor, EntityDefinition

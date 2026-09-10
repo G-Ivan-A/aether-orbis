@@ -1,5 +1,7 @@
 """Phase 1 grouping: exact canonical URL or exact content hash, nothing else."""
 
+from tests import paths as paths  # noqa: F401
+
 import unittest
 
 from aether_orbis.grouping import SourceGrouper

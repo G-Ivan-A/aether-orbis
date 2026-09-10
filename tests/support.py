@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from tests import paths as paths  # noqa: F401
+
 from pathlib import Path
 from typing import Any
 

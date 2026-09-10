@@ -1,5 +1,7 @@
 """Evaluation measures; the Decision Policy decides. The two stay separable."""
 
+from tests import paths as paths  # noqa: F401
+
 import unittest
 
 from aether_orbis.errors import SpecificationError
