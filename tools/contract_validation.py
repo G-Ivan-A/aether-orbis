@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -35,8 +36,17 @@ def load_document(path: Path) -> Any:
 
 
 def load_schema_registry(schema_dir: Path) -> tuple[dict[str, Any], Registry]:
-    """Load and statically check every JSON Schema in *schema_dir*."""
+    """Load and statically check every JSON Schema in *schema_dir*.
 
+    Schemas are immutable inputs, so the result is cached: validating many
+    documents in one process reloads nothing.
+    """
+
+    return _load_schema_registry(Path(schema_dir).resolve())
+
+
+@lru_cache(maxsize=None)
+def _load_schema_registry(schema_dir: Path) -> tuple[dict[str, Any], Registry]:
     schemas: dict[str, Any] = {}
     resources: list[tuple[str, Resource[Any]]] = []
     for path in sorted(schema_dir.glob("*.schema.json")):
