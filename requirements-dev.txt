@@ -1,2 +1,5 @@
 jsonschema[format]>=4.23,<5
 PyYAML>=6,<7
+
+# Optional graph engine of ADR-001; tests that use it skip when it is absent.
+kuzu>=0.7,<1

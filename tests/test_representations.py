@@ -2,9 +2,17 @@
 
 from tests import paths as paths  # noqa: F401
 
+import tempfile
 import unittest
+from pathlib import Path
 
-from aether_orbis.adapters import CorpusFetcher, InMemoryGraphStore, InMemoryVectorIndex
+from aether_orbis.adapters import (
+    CorpusFetcher,
+    InMemoryGraphStore,
+    InMemoryVectorIndex,
+    KuzuGraphStore,
+)
+from aether_orbis.ports import GraphStore
 from aether_orbis.representations import (
     GraphEdge,
     entity_node_id,
@@ -244,3 +252,43 @@ class ConflictingCorpusTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class KuzuGraphStoreTests(unittest.TestCase):
+    """The embedded engine of ADR-001 implements the same port as the default."""
+
+    def setUp(self):
+        try:
+            import kuzu  # noqa: F401
+        except ImportError:
+            self.skipTest("optional dependency 'kuzu' is not installed")
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.store = KuzuGraphStore(str(Path(self.directory.name) / "db"))
+        self.projection = project_graph(qualified_stream())
+
+    def test_it_satisfies_the_graph_store_port(self):
+        self.assertIsInstance(self.store, GraphStore)
+
+    def test_it_walks_back_from_an_entity_to_its_sources(self):
+        self.store.index_graph(self.projection)
+        provenance = self.store.provenance(entity_node_id("org.example-organization"))
+        self.assertTrue(provenance)
+        for item in provenance:
+            self.assertTrue(item["content_hash"].startswith("sha256:"))
+
+    def test_reindexing_the_same_run_changes_nothing(self):
+        self.store.index_graph(self.projection)
+        first = self.store.provenance(entity_node_id("org.example-organization"))
+        self.store.index_graph(self.projection)
+        self.assertEqual(first, self.store.provenance(entity_node_id("org.example-organization")))
+
+    def test_it_returns_the_same_provenance_as_the_default_store(self):
+        self.store.index_graph(self.projection)
+        default = InMemoryGraphStore()
+        default.index_graph(self.projection)
+        node = entity_node_id("org.example-organization")
+        self.assertEqual(
+            [item["source_id"] for item in default.provenance(node)],
+            [item["source_id"] for item in self.store.provenance(node)],
+        )
