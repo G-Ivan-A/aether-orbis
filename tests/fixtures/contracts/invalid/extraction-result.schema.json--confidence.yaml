@@ -1,0 +1,27 @@
+schema_version: "1.0"
+extraction_id: extraction-invalid
+source:
+  source_id: source-001
+  canonical_url: https://example.com/source/1
+  content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b9d6f965ac832e40a5df6c06afe983e3b
+  retrieved_at: "2026-09-09T12:00:00Z"
+  published_at: "2026-09-08T09:00:00Z"
+  parser_version: "1.0.0"
+  extractor_version: "1.0.0"
+entities:
+  - id: entity-1
+    type: organization
+    name: Example One
+    confidence: 0.98
+    evidence:
+      source_id: source-001
+      fragment: Example One is an organization.
+      retrieved_at: "2026-09-09T12:00:00Z"
+      evidence_strength: 0.9
+relations: []
+claims: []
+extraction_meta:
+  status: ok
+  model: extraction-model-1
+  operation_role: extraction
+  extracted_at: "2026-09-09T12:00:05Z"

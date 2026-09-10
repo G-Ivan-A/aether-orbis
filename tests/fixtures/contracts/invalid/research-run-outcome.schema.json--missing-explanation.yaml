@@ -1,0 +1,9 @@
+schema_version: "1.0"
+status: ZERO
+coverage:
+  question_coverage: 0.0
+gaps:
+  - No qualifying evidence was found.
+conflicts: []
+recommended_expansion:
+  - Add a primary-source registry.

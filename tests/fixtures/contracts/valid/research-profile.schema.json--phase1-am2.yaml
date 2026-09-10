@@ -1,0 +1,62 @@
+schema_version: "1.0"
+profile_id: fixture-am2
+profile_version: "1.0"
+phase: 1
+support: executable
+acquisition_model: AM-2
+specification:
+  schema_version: "1.0"
+  specification_id: fixture-am2-spec
+  specification_version: "1.0"
+  acquisition_model: AM-2
+  objective:
+    statement: Extract an entity relationship neighborhood.
+    expected_knowledge_product: entity_relationship_graph
+  target:
+    type: entities
+    seed_entities:
+      - Entity A
+    relation_types:
+      - related_to
+  scope:
+    strategy: expand
+    frontier:
+      seeds:
+        - Entity A
+      relation_hints:
+        - related
+    source_types:
+      - registry
+    time_window:
+      mode: current
+  evaluation:
+    dimensions:
+      - evidence_quality
+      - source_quality
+    decision_policy:
+      schema_version: "1.0"
+      policy_id: fixture-am2-policy
+      policy_version: "1.0"
+      rules:
+        - decision: QUALIFIED
+          all:
+            - dimension: evidence_quality
+              operator: gte
+              value: 0.8
+      fallback: REJECTED
+  preservation:
+    schema_version: "1.0"
+    profile: graph
+    acquired_artifact: metadata
+    derived_knowledge: full_knowledge_product
+    observation_history: latest_only
+    reproducibility_risk_accepted: true
+  termination:
+    completion_dimensions:
+      - neighborhood_completeness
+    success_conditions:
+      - dimension: neighborhood_completeness
+        operator: gte
+        value: 0.8
+    stop_conditions:
+      - frontier_exhausted

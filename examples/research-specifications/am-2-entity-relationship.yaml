@@ -1,0 +1,65 @@
+schema_version: "1.0"
+specification_id: am2-entity-relationship-example
+specification_version: "1.0"
+acquisition_model: AM-2
+objective:
+  statement: Expand from seed entities into an evidence-backed relationship graph.
+  expected_knowledge_product: entity_relationship_graph
+target:
+  type: entities
+  seed_entities:
+    - Example Organization
+  relation_types:
+    - partnered_with
+scope:
+  strategy: expand
+  frontier:
+    seeds:
+      - Example Organization
+    relation_hints:
+      - partner
+  source_types:
+    - organization_site
+    - registry
+  time_window:
+    mode: current
+evaluation:
+  dimensions:
+    - source_authority
+    - evidence_strength
+    - independence
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am2-example-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: source_authority
+            operator: gte
+            value: 0.7
+          - dimension: evidence_strength
+            operator: gte
+            value: 0.8
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  profile: graph
+  acquired_artifact: metadata
+  derived_knowledge: full_knowledge_product
+  observation_history: latest_only
+  reproducibility_risk_accepted: true
+termination:
+  completion_dimensions:
+    - neighborhood_completeness
+    - new_entity_saturation
+  success_conditions:
+    - dimension: neighborhood_completeness
+      operator: gte
+      value: 0.85
+    - dimension: new_entity_saturation
+      operator: lte
+      value: 0.05
+  stop_conditions:
+    - frontier_exhausted
+    - budget_exhausted

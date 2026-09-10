@@ -1,0 +1,9 @@
+schema_version: "1.0"
+decision_id: decision-fallback-001
+evaluation_id: evaluation-001
+policy_id: strict-policy
+policy_version: "1.0"
+decision: REJECTED
+matched_rule: null
+rationale: No ordered policy rule matched, so the fallback decision applied.
+decided_at: "2026-09-09T12:00:11Z"

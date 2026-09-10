@@ -1,0 +1,5 @@
+schema_version: "1.0"
+profile: archival
+acquired_artifact: full_content
+derived_knowledge: full_knowledge_product
+observation_history: full_history

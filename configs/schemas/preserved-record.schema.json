@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/preserved-record.schema.json",
+  "title": "Preserved Record",
+  "type": "object",
+  "required": ["schema_version", "policy", "identity"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy": {
+      "$ref": "https://aether-orbis.dev/schemas/preservation-policy.schema.json"
+    },
+    "identity": {"$ref": "#/$defs/source_identity"},
+    "acquired_artifact": {"type": "object", "minProperties": 1},
+    "derived_knowledge": {"type": "object", "minProperties": 1},
+    "previous_record_id": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "none"}}
+          }
+        }
+      },
+      "then": {"properties": {"acquired_artifact": false}},
+      "else": {"required": ["acquired_artifact"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "metadata"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"$ref": "#/$defs/acquired_metadata"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "summary"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"$ref": "#/$defs/acquired_summary"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "acquired_artifact": {"const": "evidence_fragments"}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {
+            "$ref": "#/$defs/acquired_evidence_fragments"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"acquired_artifact": {"const": "full_content"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"$ref": "#/$defs/acquired_full_content"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"derived_knowledge": {"const": "none"}}
+          }
+        }
+      },
+      "then": {"properties": {"derived_knowledge": false}},
+      "else": {"required": ["derived_knowledge"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {"derived_knowledge": {"const": "claims"}}
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "derived_knowledge": {"$ref": "#/$defs/derived_claims"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "derived_knowledge": {"const": "claims_and_relations"}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "derived_knowledge": {
+            "$ref": "#/$defs/derived_claims_and_relations"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "derived_knowledge": {"const": "full_knowledge_product"}
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "derived_knowledge": {
+            "$ref": "#/$defs/derived_full_knowledge_product"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "policy": {
+            "properties": {
+              "observation_history": {"enum": ["none", "latest_only"]}
+            }
+          }
+        }
+      },
+      "then": {"properties": {"previous_record_id": false}}
+    }
+  ],
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "knowledge_items": {
+      "type": "array",
+      "items": {"type": "object", "minProperties": 1}
+    },
+    "acquired_metadata": {
+      "type": "object",
+      "required": ["metadata"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"}
+      },
+      "additionalProperties": false
+    },
+    "acquired_summary": {
+      "type": "object",
+      "required": ["metadata", "summary"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"},
+        "summary": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "acquired_evidence_fragments": {
+      "type": "object",
+      "required": ["metadata", "summary", "evidence_fragments"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"},
+        "summary": {"type": "string", "minLength": 1},
+        "evidence_fragments": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence_fragment"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "acquired_full_content": {
+      "type": "object",
+      "required": ["metadata", "media_type", "content"],
+      "properties": {
+        "metadata": {"$ref": "#/$defs/metadata"},
+        "media_type": {"type": "string", "minLength": 1},
+        "content": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "evidence_fragment": {
+      "type": "object",
+      "required": ["fragment", "retrieved_at", "evidence_strength"],
+      "properties": {
+        "fragment": {"type": "string", "minLength": 1},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "evidence_strength": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "derived_claims": {
+      "type": "object",
+      "required": ["claims"],
+      "properties": {
+        "claims": {"$ref": "#/$defs/knowledge_items"}
+      },
+      "additionalProperties": false
+    },
+    "derived_claims_and_relations": {
+      "type": "object",
+      "required": ["claims", "relations"],
+      "properties": {
+        "claims": {"$ref": "#/$defs/knowledge_items"},
+        "relations": {"$ref": "#/$defs/knowledge_items"}
+      },
+      "additionalProperties": false
+    },
+    "derived_full_knowledge_product": {
+      "type": "object",
+      "required": ["knowledge_product"],
+      "properties": {
+        "knowledge_product": {"type": "object", "minProperties": 1}
+      },
+      "additionalProperties": false
+    },
+    "source_identity": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "canonical_url",
+        "content_hash",
+        "retrieved_at",
+        "published_at",
+        "parser_version",
+        "extractor_version"
+      ],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "canonical_url": {"type": "string", "format": "uri"},
+        "content_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "published_at": {"type": "string", "format": "date-time"},
+        "parser_version": {"type": "string", "minLength": 1},
+        "extractor_version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

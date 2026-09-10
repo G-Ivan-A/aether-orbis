@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/preservation-policy.schema.json",
+  "title": "Preservation Policy",
+  "type": "object",
+  "required": ["schema_version", "acquired_artifact", "derived_knowledge", "observation_history"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "profile": {
+      "enum": ["catalog", "monitoring", "graph", "research", "observation", "archival"]
+    },
+    "acquired_artifact": {
+      "enum": ["none", "metadata", "summary", "evidence_fragments", "full_content"]
+    },
+    "derived_knowledge": {
+      "enum": ["none", "claims", "claims_and_relations", "full_knowledge_product"]
+    },
+    "observation_history": {
+      "enum": ["none", "latest_only", "full_history"]
+    },
+    "reproducibility_risk_accepted": {"type": "boolean"}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "required": ["acquired_artifact"],
+        "properties": {
+          "acquired_artifact": {"enum": ["none", "metadata", "summary"]}
+        }
+      },
+      "then": {
+        "required": ["reproducibility_risk_accepted"],
+        "properties": {
+          "reproducibility_risk_accepted": {"const": true}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["acquired_artifact"],
+        "properties": {
+          "acquired_artifact": {"const": "full_content"}
+        }
+      },
+      "then": {
+        "required": ["profile"],
+        "properties": {
+          "profile": {"const": "archival"}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["profile"],
+        "properties": {
+          "profile": {"const": "archival"}
+        }
+      },
+      "then": {
+        "properties": {
+          "acquired_artifact": {"const": "full_content"}
+        }
+      }
+    }
+  ]
+}

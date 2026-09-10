@@ -1,0 +1,65 @@
+schema_version: "1.0"
+specification_id: am3-question-research-example
+specification_version: "1.0"
+acquisition_model: AM-3
+objective:
+  statement: Answer a bounded research question from evidence-backed claims.
+  expected_knowledge_product: evidence_backed_answers
+target:
+  type: questions
+  questions:
+    - Which preservation choices keep a research result reproducible?
+scope:
+  strategy: query
+  frontier:
+    source_types:
+      - web_search
+      - scholarly_index
+    query_templates:
+      - preservation policy reproducible research evidence
+  source_types:
+    - web_page
+    - scholarly_article
+  time_window:
+    mode: bounded
+    start: "2020-01-01T00:00:00Z"
+    end: "2026-09-09T00:00:00Z"
+evaluation:
+  dimensions:
+    - topic_match
+    - evidence_strength
+    - independence
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am3-example-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: topic_match
+            operator: gte
+            value: 0.75
+          - dimension: evidence_strength
+            operator: gte
+            value: 0.75
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  profile: research
+  acquired_artifact: evidence_fragments
+  derived_knowledge: claims_and_relations
+  observation_history: latest_only
+termination:
+  completion_dimensions:
+    - question_coverage
+    - unresolved_conflicts
+  success_conditions:
+    - dimension: question_coverage
+      operator: gte
+      value: 1.0
+    - dimension: unresolved_conflicts
+      operator: eq
+      value: 0
+  stop_conditions:
+    - frontier_exhausted
+    - budget_exhausted

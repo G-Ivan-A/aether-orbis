@@ -7,9 +7,15 @@
 
 ### Added
 
+- Исполняемая основа P1-A: двенадцать JSON Schemas контрактов, валидатор репозиторных
+  YAML-артефактов и позитивные/негативные contract fixtures.
+- Общие Research Specification examples для `AM-1`…`AM-5`; исполняемые профили Phase 1 для
+  `AM-1 Domain Monitoring` и `AM-2 Entity / Relationship Extraction`.
+- Отдельная Runtime Configuration без исследовательской политики.
+- Нормативные контракты Research Specification и Preservation v1.0.
 - `docs/analysis/2026-09-02-acquisition-models-variation.md`: анализ репрезентативных моделей
   Research / Acquisition, минимальных различий контрактов и проверка гипотезы уровней сохранения.
-- Проекты ADR: ADR-004 (Preservation Policy), ADR-005 (Evaluation Result и decision layer),
+- Принятые решения ADR-004 (Preservation Policy), ADR-005 (Evaluation Result и decision layer),
   ADR-006 (обобщённая Research Specification и состояния исхода прогона).
 - Подготовительный R&D (фаза 0 роадмапа): структура репозитория по архетипу Spoke Хаба.
 - Документы уровней 1–2: `docs/vision.md`, `docs/concept.md`, `docs/architecture.md`.
@@ -24,6 +30,9 @@
 
 ### Changed
 
+- Контракты Extraction, Evaluation / Qualification, Sufficiency и Telemetry переведены на
+  несовместимые версии 1.0 по принятым ADR-004/005/006.
+- CI валидирует схемы, конфигурации, examples и запускает контрактные unit tests.
 - `docs/vision.md` переписан как долгосрочное видение и миссия, без технических деталей MVP.
 - `docs/concept.md` дополнен разделами: обобщённая Research Specification, модели Acquisition,
   Preservation Policy, многомерная Evaluation, явные состояния недостаточности.

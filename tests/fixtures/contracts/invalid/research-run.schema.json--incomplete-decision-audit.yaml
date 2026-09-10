@@ -1,0 +1,35 @@
+schema_version: "1.0"
+run_id: run-incomplete-decision
+specification:
+  id: am2-reputation-relations
+  version: "1.0"
+runtime_configuration:
+  id: phase-1-default
+  version: "1.0"
+model_versions:
+  extraction: extraction-model-1
+processed_sources:
+  - source_id: source-001
+    canonical_url: https://example.com/source/1
+    content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b9d6f965ac832e40a5df6c06afe983e3b
+decisions:
+  - evaluation_id: evaluation-001
+    decision: QUALIFIED
+    rationale: This summary cannot identify the policy and rule that produced it.
+expansion_iterations:
+  - iteration: 0
+    strategy: expand
+    processed_source_ids:
+      - source-001
+consumed_budget:
+  iterations: 1
+  cost_rub: 12.5
+outcome:
+  schema_version: "1.0"
+  status: SUFFICIENT
+  coverage:
+    neighborhood_completeness: 0.9
+  gaps: []
+  conflicts: []
+  recommended_expansion: []
+  rationale: The required relationship neighborhood is sufficiently covered.

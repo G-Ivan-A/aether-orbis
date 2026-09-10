@@ -1,0 +1,62 @@
+schema_version: "1.0"
+specification_id: am1-hub-monitoring
+specification_version: "1.0"
+acquisition_model: AM-1
+objective:
+  statement: Monitor Hub engineering practices in each publication window.
+  expected_knowledge_product: classified_publications
+target:
+  type: topics
+  topics:
+    - software architecture
+    - research methodology
+scope:
+  strategy: enumerate
+  frontier:
+    items:
+      - https://habr.com/ru/feed/
+  source_types:
+    - feed
+    - web_page
+  time_window:
+    mode: since_last_run
+evaluation:
+  dimensions:
+    - topic_match
+    - novelty
+    - applicability
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am1-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: topic_match
+            operator: gte
+            value: 0.7
+          - dimension: novelty
+            operator: gte
+            value: 0.3
+      - decision: CONDITIONAL
+        all:
+          - dimension: topic_match
+            operator: gte
+            value: 0.5
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  profile: monitoring
+  acquired_artifact: evidence_fragments
+  derived_knowledge: claims
+  observation_history: latest_only
+termination:
+  completion_dimensions:
+    - window_coverage
+  success_conditions:
+    - dimension: window_coverage
+      operator: gte
+      value: 1.0
+  stop_conditions:
+    - window_complete
+    - budget_exhausted

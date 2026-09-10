@@ -1,0 +1,59 @@
+schema_version: "1.0"
+specification_id: am5-open-discovery-example
+specification_version: "1.0"
+acquisition_model: AM-5
+objective:
+  statement: Discover candidates that are novel relative to a knowledge baseline.
+  expected_knowledge_product: discovery_candidates
+target:
+  type: novelty
+  criteria:
+    - introduces an unseen entity or topic
+    - links previously disconnected entities
+  baseline: knowledge-snapshot-2026-09-09
+scope:
+  strategy: expand
+  frontier:
+    seeds:
+      - https://example.com/curated-start
+    relation_hints:
+      - cites
+      - links_to
+  source_types:
+    - web_page
+    - feed
+  time_window:
+    mode: continuous
+evaluation:
+  dimensions:
+    - novelty
+    - source_authority
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am5-example-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: novelty
+            operator: gte
+            value: 0.85
+          - dimension: source_authority
+            operator: gte
+            value: 0.6
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  acquired_artifact: evidence_fragments
+  derived_knowledge: claims
+  observation_history: latest_only
+termination:
+  completion_dimensions:
+    - novelty_rate
+  success_conditions:
+    - dimension: novelty_rate
+      operator: lte
+      value: 0.05
+  stop_conditions:
+    - novelty_saturated
+    - budget_exhausted

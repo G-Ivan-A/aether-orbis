@@ -1,0 +1,21 @@
+schema_version: "1.0"
+policy:
+  schema_version: "1.0"
+  acquired_artifact: none
+  derived_knowledge: none
+  observation_history: none
+  reproducibility_risk_accepted: true
+identity:
+  source_id: source-contradiction
+  canonical_url: https://example.com/source/contradiction
+  content_hash: sha256:9d6f965ac832e40a5df6c06afe983e3b9d6f965ac832e40a5df6c06afe983e3b
+  retrieved_at: "2026-09-09T12:00:00Z"
+  published_at: "2026-09-08T09:00:00Z"
+  parser_version: "1.0.0"
+  extractor_version: "1.0.0"
+acquired_artifact:
+  full_content: This policy claims that no acquired artifact is retained.
+derived_knowledge:
+  claims:
+    - This policy claims that no derived knowledge is retained.
+previous_record_id: source-contradiction-v0

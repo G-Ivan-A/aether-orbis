@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.1
-updated: 2026-08-18
+version: 0.2
+updated: 2026-09-09
 temperature: 0.2
 ---
 
@@ -18,10 +18,15 @@ graph LR
     AO[AetherOrbis<br/>Web Knowledge Acquisition]
     AN[Аналитический компонент<br/>потребитель контекста]
     OPS[Оператор / исследователь]
+    RP[Research Profile<br/>исследовательская политика]
+    RC[Runtime Configuration<br/>модели, workers, stores, budgets]
     LLM[Провайдеры моделей<br/>RF / China / прочие]
 
     EXT -->|HTTP| AO
-    OPS -->|YAML-конфиг направления| AO
+    OPS --> RP
+    OPS --> RC
+    RP --> AO
+    RC --> AO
     AO <-->|Model Router| LLM
     AO -->|формализованный контракт| AN
     AO -->|телеметрия| OPS
@@ -33,7 +38,7 @@ graph LR
 flowchart TD
     S[Sources] --> ING[Ingestion]
     ING --> RAW[(Raw / Source Store)]
-    RAW --> EXTR[Extraction<br/>entities, relations, claims<br/>+ evidence + confidence]
+    RAW --> EXTR[Extraction<br/>entities, relations, claims<br/>+ evidence + content identity]
     EXTR --> RG{Relevance /<br/>Quality Gate}
 
     RG -->|REJECTED| SI[(Source Intelligence<br/>preserved material according to<br/>Preservation Requirements)]
@@ -45,9 +50,9 @@ flowchart TD
     GRAPH --> SG{Sufficiency Gate}
     VEC --> SG
 
-    SG -->|достаточно| AN[Analysis]
-    SG -->|недостаточно| EXP[Расширение сбора /<br/>уточняющий запрос]
-    SG -->|исчерпано| ZERO[ZERO<br/>insufficient evidence]
+    SG -->|нужно продолжение| EXP[Расширение сбора /<br/>уточняющий запрос]
+    SG -->|SUFFICIENT| AN[Analysis]
+    SG -->|PARTIAL / ZERO /<br/>CONFLICT / EXHAUSTED| OUT[Объяснимый outcome<br/>coverage, gaps, conflicts]
 
     EXP --> ING
     AN --> RES[Результат / решение / артефакт]
@@ -102,7 +107,7 @@ graph TB
 | Acquisition | сбором, хранением сырого материала, извлечением утверждений | строить граф, оценивать релевантность для задачи |
 | Selection | решением `QUALIFIED` / `CONDITIONAL` / `REJECTED` и сохранением отклонённого материала | изменять содержимое claims |
 | Representation | решением, что становится ребром графа, и entity resolution | пере-извлекать данные из источника |
-| Decision | решением «достаточно / недостаточно / ZERO» | делать предметные выводы |
+| Decision | итогом `SUFFICIENT` / `PARTIAL` / `ZERO` / `CONFLICT` / `EXHAUSTED` | делать предметные выводы |
 | Consumption | рассуждением поверх контекста | обращаться к источникам напрямую в обход контракта |
 | Cross-cutting | выбором модели, наблюдаемостью, конфигурацией | принимать решения gates |
 
@@ -115,11 +120,13 @@ graph TB
 
 1. **Research Specification** — цель, target и стратегия frontier.
 2. **Evaluation Result + Decision Policy** — измеряемые характеристики и правила вывода решения.
-3. **Preservation Requirements** — состав сохраняемого материала и производного знания.
+3. **Preservation Policy** — состав сохраняемого материала, производного знания и истории.
 4. **Termination / Sufficiency Policy** — условия завершения и статус исхода прогона.
 
 Это **контрактные точки вариативности**, а не отдельные runtime-компоненты. Компонентные границы и
 последовательность основного потока данных остаются общими для всех моделей Acquisition.
+Research Profile содержит исследовательскую политику, а отдельная Runtime Configuration — модели,
+workers, stores, budgets и retries; смешение этих классов запрещено схемами.
 
 ## 5. Логика Relevance Gate
 
@@ -145,18 +152,25 @@ stateDiagram-v2
 ```mermaid
 stateDiagram-v2
     [*] --> Evaluate
-    Evaluate: покрытие вопроса, плотность evidence,<br/>конфликты, доля UNCERTAIN
-    Evaluate --> Sufficient: критерии достаточности выполнены
-    Evaluate --> Insufficient: критерии не выполнены
-    Insufficient --> Expand: бюджет итераций не исчерпан
+    Evaluate: completion dimensions из Research Specification
+    Evaluate --> Sufficient: success conditions выполнены
+    Evaluate --> Conflict: независимые evidence противоречат
+    Evaluate --> Zero: квалифицируемых данных нет
+    Evaluate --> Incomplete: остаются gaps
+    Incomplete --> Expand: есть полезное расширение и runtime budget
     Expand --> Evaluate: повторный сбор и Relevance Gate
-    Insufficient --> Zero: бюджет / источники исчерпаны
-    Sufficient --> [*]: в Analysis
-    Zero --> [*]: явный отказ, insufficient evidence
+    Incomplete --> Partial: полезный неполный результат
+    Incomplete --> Exhausted: runtime budget исчерпан
+    Sufficient --> [*]: SUFFICIENT → Analysis
+    Partial --> [*]: PARTIAL + gaps
+    Zero --> [*]: ZERO + rationale
+    Conflict --> [*]: CONFLICT + source groups
+    Exhausted --> [*]: EXHAUSTED + consumed budget
 ```
 
-Цикл `Insufficient → Expand → Evaluate` ограничен бюджетом итераций и бюджетом стоимости; выход по
-исчерпанию любого из них даёт `ZERO`, а не «лучшее из имеющегося».
+Цикл `Incomplete → Expand → Evaluate` ограничен Runtime Configuration. Итог различает неполноту,
+отсутствие данных, противоречие и исчерпание ресурсов; каждый статус содержит coverage, gaps,
+conflicts, recommended expansion и rationale.
 
 ## 7. Экономика по ролям операций
 
@@ -227,5 +241,7 @@ graph LR
 ## 10. Связанные артефакты
 
 - [`docs/concept.md`](concept.md) — компоненты и контракты
-- [`docs/standards/`](standards/) — контракты границ
+- [`docs/standards/research-specification-contract.md`](standards/research-specification-contract.md)
+- [`docs/standards/preservation-contract.md`](standards/preservation-contract.md)
+- [`configs/schemas/`](../configs/schemas/) — исполняемые схемы контрактов
 - [`docs/adr/README.md`](adr/README.md) — технические решения

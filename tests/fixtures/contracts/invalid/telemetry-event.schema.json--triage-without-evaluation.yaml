@@ -1,0 +1,10 @@
+schema_version: "1.0"
+event_id: event-triage-without-evaluation
+run_id: run-001
+profile_id: fixture-am1
+component: evaluation
+operation_role: triage
+started_at: "2026-09-09T12:00:06Z"
+finished_at: "2026-09-09T12:00:07Z"
+latency_ms: 1000
+status: ok

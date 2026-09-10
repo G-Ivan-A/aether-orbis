@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.3
-updated: 2026-09-03
+version: 0.4
+updated: 2026-09-09
 temperature: 0.2
 ---
 
@@ -276,12 +276,12 @@ Sufficiency оценивает не наличие данных, а **приго
 
 | Контракт | Граница | Статус |
 | --- | --- | --- |
-| [extraction-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/extraction-contract.md) | Extraction → всё, что ниже | действует |
-| [relevance-gate-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/relevance-gate-contract.md) | Extraction → Knowledge Builder | действует; изменение предложено [ADR-005](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-005-evaluation-result.md) |
-| [sufficiency-gate-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/sufficiency-gate-contract.md) | Context → Analysis | действует; расширение статусов предложено [ADR-006](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-006-research-specification.md) |
-| [telemetry-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/telemetry-contract.md) | все компоненты → наблюдаемость | действует |
-| research-specification-contract | Потребитель → Acquisition | предложен [ADR-006](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-006-research-specification.md) |
-| preservation-contract | Research Run → долговременное хранение | предложен [ADR-004](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-004-preservation-policy.md) |
+| [extraction-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/extraction-contract.md) | Extraction → всё, что ниже | v1.0 `proposed`; соответствует принятому ADR-005 |
+| [relevance-gate-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/relevance-gate-contract.md) | Extraction → Knowledge Builder | v1.0 `proposed`; соответствует принятому [ADR-005](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-005-evaluation-result.md) |
+| [sufficiency-gate-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/sufficiency-gate-contract.md) | Context → Analysis | v1.0 `proposed`; соответствует принятому [ADR-006](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-006-research-specification.md) |
+| [telemetry-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/telemetry-contract.md) | все компоненты → наблюдаемость | v1.0 `proposed`; соответствует принятым ADR-005/006 |
+| [research-specification-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/research-specification-contract.md) | Потребитель → Acquisition | v1.0 `proposed`; соответствует принятому [ADR-006](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-006-research-specification.md) |
+| [preservation-contract](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/standards/preservation-contract.md) | Research Run → долговременное хранение | v1.0 `proposed`; соответствует принятому [ADR-004](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-004-preservation-policy.md) |
 
 Контракты делают компоненты заменяемыми: инструмент внутри компонента заменяется свободно, пока
 удовлетворяет контракту на границе. Изменение контракта проходит цепочку `анализ → ADR → стандарт`.

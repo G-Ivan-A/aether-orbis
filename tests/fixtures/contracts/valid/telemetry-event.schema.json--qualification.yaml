@@ -1,0 +1,15 @@
+schema_version: "1.0"
+event_id: event-qualification-001
+run_id: run-001
+profile_id: fixture-am2
+component: qualification
+operation_role: qualification
+started_at: "2026-09-09T12:00:10Z"
+finished_at: "2026-09-09T12:00:10Z"
+latency_ms: 1
+status: ok
+qualification:
+  decision: QUALIFIED
+  policy_id: permissive-policy
+  policy_version: "1.0"
+  matched_rule: 0

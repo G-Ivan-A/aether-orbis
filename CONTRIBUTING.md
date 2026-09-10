@@ -35,14 +35,21 @@
 | Проверка | Когда |
 | --- | --- |
 | `bash tools/validate-file-naming.sh` | локально и в CI |
-| Валидация frontmatter активных markdown-артефактов | CI |
-| Контрактные тесты (`tests/`) | CI |
+| `bash tools/validate-frontmatter.sh` | локально и в CI |
+| `bash tools/validate-repo-boundary.sh` | локально и в CI |
+| `python3 tools/validate-contracts.py` | локально и в CI |
+| `python3 -m unittest discover -s tests -v` | локально и в CI |
 | Линтеры и тесты кода | с фазы 1 роадмапа |
 
 Запуск локально перед пушем:
 
 ```bash
+python3 -m pip install --user -r requirements-dev.txt
+python3 tools/validate-contracts.py
+python3 -m unittest discover -s tests -v
 bash tools/validate-file-naming.sh
+bash tools/validate-frontmatter.sh
+bash tools/validate-repo-boundary.sh
 ```
 
 ## Данные и секреты
@@ -56,7 +63,7 @@ API, артефакты прогонов, логи и телеметрия. См
 - [ ] PR связан с issue.
 - [ ] Затронутые контракты и ADR обновлены.
 - [ ] Frontmatter изменённых артефактов актуален (`version`, `updated`, `status`).
-- [ ] `tools/validate-file-naming.sh` проходит.
+- [ ] Локальные проверки из раздела «Качество» проходят.
 - [ ] CI зелёный.
 - [ ] Runtime-данные и секреты не добавлены.
 - [ ] AI-участие раскрыто согласно [`GOVERNANCE.md`](GOVERNANCE.md).

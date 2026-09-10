@@ -52,6 +52,18 @@ while IFS= read -r file; do
   check_file "$file" governance "$GOVERNANCE_STATUSES"
 done < <(find docs/adr docs/standards -type f -name '*.md' ! -name 'README.md' | sort)
 
+while IFS= read -r file; do
+  basename="${file##*/}"
+  adr_id="$(printf '%s\n' "$basename" | sed -E 's/^[0-9]{4}-[0-9]{2}-adr-([0-9]{3})-.*/ADR-\1/')"
+  adr_status="$(field_value "$file" status)"
+  registry_entry="$(grep -E "^\\| $adr_id \\|" docs/adr/README.md || true)"
+  if [[ -z "$registry_entry" ]]; then
+    fail "ADR registry is missing $adr_id from $file"
+  elif ! grep -qE "\\|[[:space:]]*$adr_status[[:space:]]*\\|" <<<"$registry_entry"; then
+    fail "ADR registry status for $adr_id does not match '$adr_status' in $file"
+  fi
+done < <(find docs/adr -maxdepth 1 -type f -name '*-adr-*.md' | sort)
+
 for file in docs/README.md docs/vision.md docs/concept.md docs/architecture.md \
             docs/roadmap.md docs/adr/README.md PRODUCT_VISION.md GOVERNANCE.md; do
   [[ -f "$file" ]] || continue

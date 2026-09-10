@@ -1,0 +1,54 @@
+schema_version: "1.0"
+specification_id: am1-domain-monitoring-example
+specification_version: "1.0"
+acquisition_model: AM-1
+objective:
+  statement: Monitor a known publication set during each research window.
+  expected_knowledge_product: classified_publications
+target:
+  type: topics
+  topics:
+    - software architecture
+scope:
+  strategy: enumerate
+  frontier:
+    items:
+      - https://example.com/feed
+  source_types:
+    - feed
+  time_window:
+    mode: since_last_run
+evaluation:
+  dimensions:
+    - topic_match
+    - evidence_strength
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am1-example-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: topic_match
+            operator: gte
+            value: 0.7
+          - dimension: evidence_strength
+            operator: gte
+            value: 0.6
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  profile: monitoring
+  acquired_artifact: evidence_fragments
+  derived_knowledge: claims
+  observation_history: latest_only
+termination:
+  completion_dimensions:
+    - window_coverage
+  success_conditions:
+    - dimension: window_coverage
+      operator: gte
+      value: 1.0
+  stop_conditions:
+    - window_complete
+    - budget_exhausted

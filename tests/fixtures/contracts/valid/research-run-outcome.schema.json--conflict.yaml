@@ -1,0 +1,14 @@
+schema_version: "1.0"
+status: CONFLICT
+coverage:
+  question_coverage: 0.9
+gaps: []
+conflicts:
+  - dimension: relationship_status
+    description: Two qualified source groups report incompatible relationship states.
+    source_group_ids:
+      - canonical:https://example.com/source/1
+      - canonical:https://example.org/source/2
+recommended_expansion:
+  - Acquire a primary statement that resolves the relationship date.
+rationale: High-quality independent sources materially contradict each other.

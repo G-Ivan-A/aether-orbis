@@ -1,0 +1,65 @@
+schema_version: "1.0"
+specification_id: am4-contract-expressibility
+specification_version: "1.0"
+acquisition_model: AM-4
+objective:
+  statement: Detect changes in declared properties of monitored products.
+  expected_knowledge_product: property_change_set
+target:
+  type: observations
+  objects:
+    - Product A
+    - Product B
+  properties:
+    - price
+    - availability
+scope:
+  strategy: enumerate
+  frontier:
+    items:
+      - https://example.com/product-a
+      - https://example.com/product-b
+  source_types:
+    - product_page
+    - registry
+  time_window:
+    mode: since_last_run
+evaluation:
+  dimensions:
+    - source_quality
+    - recency
+    - independence
+  decision_policy:
+    schema_version: "1.0"
+    policy_id: am4-selection
+    policy_version: "1.0"
+    rules:
+      - decision: QUALIFIED
+        all:
+          - dimension: source_quality
+            operator: gte
+            value: 0.8
+          - dimension: recency
+            operator: gte
+            value: 0.8
+    fallback: REJECTED
+preservation:
+  schema_version: "1.0"
+  profile: observation
+  acquired_artifact: evidence_fragments
+  derived_knowledge: claims
+  observation_history: full_history
+termination:
+  completion_dimensions:
+    - object_property_coverage
+    - change_detectability
+  success_conditions:
+    - dimension: object_property_coverage
+      operator: gte
+      value: 1.0
+    - dimension: change_detectability
+      operator: gte
+      value: 0.9
+  stop_conditions:
+    - window_complete
+    - budget_exhausted

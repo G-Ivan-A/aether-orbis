@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.2
-updated: 2026-08-18
+version: 0.3
+updated: 2026-09-09
 temperature: 0.2
 ---
 
@@ -41,7 +41,8 @@ graph LR
 **Definition of Done:** структура соответствует архетипу; документы L1–L4 созданы и заполнены;
 контракты и ADR соответствуют SSOT v4.3; issues созданы; PR готов к ревью.
 
-**Статус:** закрывается настоящим PR.
+**Статус:** завершена; ADR-001…ADR-003 остаются `proposed`, ADR-004…ADR-006 приняты, основа
+репозитория создана.
 
 ## Фаза 1 — Интеграция open-source
 
@@ -55,13 +56,17 @@ Monitoring` и `AM-2 Entity / Relationship Extraction` — с конфигури
 
 | Задача | Результат |
 | --- | --- |
-| P1-A Контракты и исполнимые Research Specifications | актуальные контракты ADR-004/005/006 и валидируемые профили AM-1/AM-2 |
+| P1-A Контракты и исполнимые Research Specifications ([#35](https://github.com/G-Ivan-A/aether-orbis/issues/35)) | схемы и контракты v1.0, валидируемые профили AM-1/AM-2, примеры выразимости AM-1…AM-5 |
 | P1-B Acquisition core | ingestion, extraction, evaluation и preservation из Research Specification |
 | P1-C Persistence, orchestration и end-to-end доказательство | graph/vector representations, Research Run и сквозные прогоны AM-1/AM-2 |
 
-**Definition of Done:** один прогон от источника до контекста проходит целиком; выдача Extraction
-проходит валидацию по [`extraction-contract`](standards/extraction-contract.md); выбор графовой БД
-зафиксирован в ADR-001.
+**P1-A Definition of Done:** контракты согласованы с ADR-004/005/006; положительные и негативные
+fixtures, два исполняемых профиля, отдельный runtime-конфиг и пять аналитических примеров проходят
+CI. Реализация ingestion, LLM, persistence и end-to-end прогона остаётся в P1-B/P1-C.
+
+**Definition of Done всей Фазы 1:** один прогон от источника до контекста проходит целиком; выдача
+Extraction проходит валидацию по [`extraction-contract`](standards/extraction-contract.md); выбор
+графовой БД зафиксирован в ADR-001.
 
 **Риски:** слепое доверие OSS-решениям; недооценка качества извлечения. Митигация — T1.1 и
 evaluation фазы 2.
@@ -88,7 +93,7 @@ evaluation фазы 2.
 | Задача | Результат |
 | --- | --- |
 | T3.1 Реализация Relevance Gate по контракту | решения, Source Intelligence |
-| T3.2 Реализация Sufficiency Gate по контракту | `sufficient` / `insufficient` / `zero` |
+| T3.2 Реализация Sufficiency Gate по контракту | `SUFFICIENT` / `PARTIAL` / `ZERO` / `CONFLICT` / `EXHAUSTED` с объяснением |
 | T3.3 Телеметрия по контракту | события на каждом переходе, сводка прогона |
 | T3.4 Публичный API на FastAPI | эндпоинты запуска прогона и получения контекста |
 | T3.5 Обязательная 2FA (TOTP или IAM) | защищённый доступ |

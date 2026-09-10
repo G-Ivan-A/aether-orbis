@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/evaluation-result.schema.json",
+  "title": "Evaluation Result",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "evaluation_id",
+    "specification_id",
+    "subject",
+    "evaluation_stage",
+    "characteristics",
+    "evaluated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "evaluation_id": {"$ref": "#/$defs/identifier"},
+    "specification_id": {"$ref": "#/$defs/identifier"},
+    "subject": {
+      "type": "object",
+      "required": ["source_id", "source_group_id", "canonical_url", "content_hash"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/identifier"},
+        "source_group_id": {"type": "string", "minLength": 1},
+        "canonical_url": {"type": "string", "format": "uri"},
+        "content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluation_stage": {"enum": ["triage", "full"]},
+    "characteristics": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^(?!confidence$)[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["score", "rationale"],
+        "properties": {
+          "score": {"type": "number", "minimum": 0, "maximum": 1},
+          "rationale": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evaluated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$"
+    }
+  }
+}
