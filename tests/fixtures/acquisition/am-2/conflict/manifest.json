@@ -1,0 +1,16 @@
+{
+  "Example Organization": [
+    {
+      "url": "https://registry.example.org/entities/example-organization",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:10:00Z",
+      "payload_file": "registry-entry.html"
+    },
+    {
+      "url": "https://mirror.example.net/corrections/example-organization",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:12:00Z",
+      "payload_file": "registry-correction.html"
+    }
+  ]
+}

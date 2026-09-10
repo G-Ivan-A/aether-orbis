@@ -57,6 +57,7 @@ class CompletionState:
     processed_frontier: tuple[FrontierItem, ...] = ()
     remaining_frontier: tuple[FrontierItem, ...] = ()
     iterations: int = 0
+    ingestion_failures: int = 0
     discovered_last_iteration: tuple[str, ...] = ()
     known_before_last_iteration: tuple[str, ...] = ()
 
@@ -143,9 +144,15 @@ def detect_conflicts(qualified: Sequence[MaterialOutcome]) -> tuple[dict[str, An
     return tuple(conflicts)
 
 
-def _unmet(
+def unmet_conditions(
     coverage: Mapping[str, Measurement], conditions: Sequence[Mapping[str, Any]]
 ) -> tuple[str, ...]:
+    """Return one explained gap per success condition that is not satisfied.
+
+    A dimension that was never measured is a gap too: an unconfigured completion
+    evaluator must not read as success.
+    """
+
     gaps: list[str] = []
     for condition in conditions:
         dimension = condition["dimension"]
@@ -203,7 +210,7 @@ def build_run_outcome(
         )
 
     conditions = success_conditions(specification)
-    gaps = list(_unmet(coverage, conditions))
+    gaps = list(unmet_conditions(coverage, conditions))
     conflicts = detect_conflicts(qualified)
 
     if not qualified:

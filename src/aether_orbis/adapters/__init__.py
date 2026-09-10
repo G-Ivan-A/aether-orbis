@@ -7,6 +7,12 @@ adapters (Crawl4AI, Trafilatura, an LLM extractor) implement the same ports and
 are selected in ``docs/analysis/2026-09-10-acquisition-core-oss-selection.md``.
 """
 
+from aether_orbis.adapters.completion import (
+    ConfiguredCompletionEvaluator,
+    neighborhood_completeness,
+    new_entity_saturation,
+    window_coverage,
+)
 from aether_orbis.adapters.evaluators import (
     ConfiguredEvaluator,
     constant,
@@ -23,14 +29,23 @@ from aether_orbis.adapters.extractors import (
 )
 from aether_orbis.adapters.fetchers import CorpusFetcher, StaticFetcher, load_corpus
 from aether_orbis.adapters.parsers import HtmlTextParser, PlainTextParser, TrafilaturaParser
+from aether_orbis.adapters.representations import (
+    InMemoryGraphStore,
+    InMemoryVectorIndex,
+    KuzuGraphStore,
+)
 
 __all__ = [
+    "ConfiguredCompletionEvaluator",
     "ConfiguredEvaluator",
     "CorpusFetcher",
     "DictionaryExtractor",
     "FailingExtractor",
     "EntityDefinition",
     "HtmlTextParser",
+    "InMemoryGraphStore",
+    "InMemoryVectorIndex",
+    "KuzuGraphStore",
     "PlainTextParser",
     "StaticFetcher",
     "TrafilaturaParser",
@@ -41,4 +56,7 @@ __all__ = [
     "mean_evidence_strength",
     "mean_extraction_confidence",
     "metadata_score",
+    "neighborhood_completeness",
+    "new_entity_saturation",
+    "window_coverage",
 ]
