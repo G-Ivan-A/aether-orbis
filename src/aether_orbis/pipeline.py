@@ -8,7 +8,7 @@ material and what is preserved — comes from the Research Specification.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Mapping, Protocol, runtime_checkable
+from typing import Any, Iterable, Mapping, Protocol, Sequence, runtime_checkable
 
 from aether_orbis import evaluation as evaluation_stage
 from aether_orbis.clock import Clock, StepClock, to_rfc3339
@@ -103,14 +103,31 @@ class AcquisitionPipeline:
         self._dimensions = evaluation_stage.declared_dimensions(self.specification)
         self._policy = evaluation_stage.decision_policy(self.specification)
 
-    def run(self) -> AcquisitionRun:
-        """Acquire, evaluate and preserve every material on the frontier."""
+    def run(
+        self,
+        frontier: Sequence[FrontierItem] | None = None,
+        *,
+        seen_source_ids: Iterable[str] = (),
+    ) -> AcquisitionRun:
+        """Acquire, evaluate and preserve every material on the frontier.
 
-        frontier = build_frontier(self.specification)
+        *frontier* defaults to the one declared by the specification. An
+        orchestrator that expands the frontier over several iterations passes the
+        next batch explicitly together with the sources it already processed, so
+        a source reachable from two seeds is decided once per run.
+
+        Deduplication is by source identity, never by content hash: two distinct
+        sources that carry identical content are exactly what the ``independence``
+        characteristic exists to measure, so both are ingested and evaluated.
+        """
+
+        items = tuple(frontier) if frontier is not None else build_frontier(self.specification)
+        seen = set(seen_source_ids)
+        first_event = len(self._events)
         outcomes: list[MaterialOutcome] = []
         failures: list[IngestionFailure] = []
 
-        for item in frontier:
+        for item in items:
             for material in self.fetcher.fetch(item):
                 started = self.clock.now()
                 try:
@@ -127,16 +144,19 @@ class AcquisitionPipeline:
                     )
                     continue
                 self._emit("parsing", started, status="ok")
+                if source.source_id in seen:
+                    continue
+                seen.add(source.source_id)
                 outcome = self._process(source)
                 outcomes.append(outcome)
                 if self.store is not None:
                     self.store.save(outcome)
 
         return AcquisitionRun(
-            frontier=frontier,
+            frontier=items,
             outcomes=tuple(outcomes),
             failures=tuple(failures),
-            events=tuple(self._events),
+            events=tuple(self._events[first_event:]),
         )
 
     def _process(self, source: NormalizedSource) -> MaterialOutcome:
