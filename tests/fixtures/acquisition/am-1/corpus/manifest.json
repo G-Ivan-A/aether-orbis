@@ -1,0 +1,28 @@
+{
+  "https://example.com/feed": [
+    {
+      "url": "https://example.com/news/platform-review",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:00:00Z",
+      "payload_file": "qualified.html"
+    },
+    {
+      "url": "https://example.com/news/hiring-update",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:00:05Z",
+      "payload_file": "conditional.html"
+    },
+    {
+      "url": "https://example.com/news/office-relocation",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:00:10Z",
+      "payload_file": "off-topic.html"
+    },
+    {
+      "url": "https://example.com/news/broken-encoding",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:00:15Z",
+      "payload_file": "malformed.bin"
+    }
+  ]
+}

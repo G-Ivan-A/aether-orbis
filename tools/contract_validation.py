@@ -3,14 +3,21 @@
 from __future__ import annotations
 
 import json
-import operator
+import sys
+from functools import lru_cache
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any, Iterable
 
 import yaml
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import ValidationError
 from referencing import Registry, Resource
+
+SRC = Path(__file__).resolve().parents[1] / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+from aether_orbis.evaluation import OPERATORS, match_decision_rule  # noqa: E402
 
 
 ARTIFACTS = (
@@ -18,15 +25,6 @@ ARTIFACTS = (
     ("configs/runtime/*.yaml", "runtime-configuration.schema.json"),
     ("examples/research-specifications/*.yaml", "research-specification.schema.json"),
 )
-
-OPERATORS: dict[str, Callable[[float, float], bool]] = {
-    "gte": operator.ge,
-    "gt": operator.gt,
-    "lte": operator.le,
-    "lt": operator.lt,
-    "eq": operator.eq,
-}
-
 
 def load_document(path: Path) -> Any:
     """Load a JSON or YAML document from *path*."""
@@ -38,8 +36,17 @@ def load_document(path: Path) -> Any:
 
 
 def load_schema_registry(schema_dir: Path) -> tuple[dict[str, Any], Registry]:
-    """Load and statically check every JSON Schema in *schema_dir*."""
+    """Load and statically check every JSON Schema in *schema_dir*.
 
+    Schemas are immutable inputs, so the result is cached: validating many
+    documents in one process reloads nothing.
+    """
+
+    return _load_schema_registry(Path(schema_dir).resolve())
+
+
+@lru_cache(maxsize=None)
+def _load_schema_registry(schema_dir: Path) -> tuple[dict[str, Any], Registry]:
     schemas: dict[str, Any] = {}
     resources: list[tuple[str, Resource[Any]]] = []
     for path in sorted(schema_dir.glob("*.schema.json")):
@@ -133,10 +140,9 @@ def validate_policy_dimensions(document: Any, schema_name: str) -> list[str]:
     return errors
 
 
-def validate_document(path: Path, schema_name: str, schema_dir: Path) -> list[str]:
-    """Return all schema and cross-field validation errors for one document."""
+def validate_instance(document: Any, schema_name: str, schema_dir: Path) -> list[str]:
+    """Return all schema and cross-field validation errors for a loaded document."""
 
-    document = load_document(path)
     schemas, registry = load_schema_registry(schema_dir)
     if schema_name not in schemas:
         return [f"$: schema {schema_name!r} was not found in {schema_dir}"]
@@ -149,6 +155,12 @@ def validate_document(path: Path, schema_name: str, schema_dir: Path) -> list[st
     return sorted(set(errors))
 
 
+def validate_document(path: Path, schema_name: str, schema_dir: Path) -> list[str]:
+    """Return all schema and cross-field validation errors for one document."""
+
+    return validate_instance(load_document(path), schema_name, schema_dir)
+
+
 def _as_document(value: Any) -> Any:
     if isinstance(value, (str, Path)):
         return load_document(Path(value))
@@ -156,24 +168,13 @@ def _as_document(value: Any) -> Any:
 
 
 def apply_decision_policy(evaluation: Any, policy: Any) -> str:
-    """Apply *policy* to a saved EvaluationResult without reevaluating its subject."""
+    """Apply *policy* to a saved EvaluationResult without reevaluating its subject.
 
-    evaluation_doc = _as_document(evaluation)
-    policy_doc = _as_document(policy)
-    scores = {
-        name: characteristic["score"]
-        for name, characteristic in evaluation_doc["characteristics"].items()
-    }
-    for rule in policy_doc["rules"]:
-        if all(
-            condition["dimension"] in scores
-            and OPERATORS[condition["operator"]](
-                scores[condition["dimension"]], condition["value"]
-            )
-            for condition in rule["all"]
-        ):
-            return rule["decision"]
-    return policy_doc["fallback"]
+    The interpreter itself lives in :mod:`aether_orbis.evaluation`; this wrapper
+    only adds path loading so that stored fixtures can be re-decided directly.
+    """
+
+    return match_decision_rule(_as_document(evaluation), _as_document(policy))[0]
 
 
 def iter_repository_artifacts(root: Path) -> Iterable[tuple[Path, str]]:

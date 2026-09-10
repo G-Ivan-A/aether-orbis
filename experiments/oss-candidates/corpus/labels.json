@@ -1,0 +1,20 @@
+{
+  "article.html": {
+    "content": [
+      "The platform moved from a modular monolith to explicit service boundaries in March 2026.",
+      "Deployment now runs twice a week without a maintenance window."
+    ],
+    "boilerplate": ["Sign in", "window.tracking", "Subscribe to our newsletter", "All rights reserved"]
+  },
+  "listing.html": {
+    "content": [
+      "Example Registry confirmed the agreement on 9 September 2026.",
+      "Active"
+    ],
+    "boilerplate": ["Terms of service", "Search"]
+  },
+  "empty.html": {
+    "content": [],
+    "boilerplate": ["Copyright 2026 Example Media"]
+  }
+}

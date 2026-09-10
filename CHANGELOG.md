@@ -7,6 +7,16 @@
 
 ### Added
 
+- Acquisition-ядро P1-B: фронтир из Research Specification, нормализация с обязательной
+  идентичностью содержимого, дешёвый triage и полная оценка с хранимым `EvaluationResult`,
+  извлечение claims/сущностей/связей с дословно проверяемыми evidence fragments, группировка
+  источников фазы 1 и сохранение по трём независимым dimensions.
+- Порты и оффлайн-адаптеры внешних зависимостей: прогон, тесты и пример выполняются без сети,
+  платных API и production-хранилищ.
+- Локальные прогоны `AM-1` и `AM-2` на фикстурах: `examples/acquisition/local_acquisition_run.py`
+  и интеграционные тесты `tests/test_acquisition_run.py`.
+- `docs/analysis/2026-09-10-acquisition-oss-candidates.md` с критериями выбора и измеримыми
+  результатами экспериментов в `experiments/oss-candidates/`.
 - Исполняемая основа P1-A: двенадцать JSON Schemas контрактов, валидатор репозиторных
   YAML-артефактов и позитивные/негативные contract fixtures.
 - Общие Research Specification examples для `AM-1`…`AM-5`; исполняемые профили Phase 1 для
