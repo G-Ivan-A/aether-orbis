@@ -53,6 +53,14 @@
 
 ### Changed
 
+- `docs/architecture.md` (0.3) синхронизирован с кодом Фазы 1: устаревшие `Relevance Gate` и
+  `Graph / Context Builder` заменены на `Triage Evaluation` → `Extraction` → `EvaluationResult` →
+  `Decision Policy` → `QualificationDecision` → `Knowledge Builder` / `Knowledge Product`, поток
+  доведён до `Research Run Outcome` и `Context Package`, а диаграммы показывают независимость
+  графового и векторного представлений.
+- `docs/roadmap.md` (0.5) отражает завершение P1-A, P1-B и P1-C, без ссылок на ликвидированную
+  задачу T1.1 и на закрытые митигации (отложенный выбор графовой БД, gates «до реализации»).
+
 - ADR-001: отложенный выбор графовой БД заменён явным — движком выбран Kuzu, default фазы 1
   остаётся stdlib-адаптером за тем же портом; зафиксированы последствия миграции (версия 0.2).
 - `AcquisitionPipeline.run()` принимает фронтир и уже обработанные `source_id`, что позволяет

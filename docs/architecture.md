@@ -1,14 +1,18 @@
 ---
 status: draft
-version: 0.2
-updated: 2026-09-09
+version: 0.3
+updated: 2026-09-11
 temperature: 0.2
 ---
 
 # AetherOrbis — Архитектура
 
 Документ описывает **как** система устроена: потоки данных, зоны ответственности и точки принятия
-решений. Что именно система делает — см. [`docs/concept.md`](concept.md).
+решений. Что именно система делает — см. [`docs/concept.md`](concept.md). Термины употребляются в
+значении [`docs/standards/glossary.md`](standards/glossary.md).
+
+Разделы 2–7 отражают реализацию Фазы 1 (`src/aether_orbis/`), разделы 8–9 — целевое развёртывание
+по [ADR-003](adr/2026-08-adr-003-infrastructure.md), которое ещё не выполнено.
 
 ## 1. Контекстная диаграмма
 
@@ -36,32 +40,46 @@ graph LR
 
 ```mermaid
 flowchart TD
-    S[Sources] --> ING[Ingestion]
+    S[Sources] --> ING[Ingestion<br/>нормализация + content identity]
     ING --> RAW[(Raw / Source Store)]
-    RAW --> EXTR[Extraction<br/>entities, relations, claims<br/>+ evidence + content identity]
-    EXTR --> RG{Relevance /<br/>Quality Gate}
+    RAW --> TR{Triage Evaluation<br/>+ Decision Policy}
 
-    RG -->|REJECTED| SI[(Source Intelligence<br/>preserved material according to<br/>Preservation Requirements)]
-    RG -->|QUALIFIED / CONDITIONAL<br/>по политике направления| GB[Graph / Context Builder]
+    TR -->|REJECTED — без затрат на Extraction| PRES[(Preserved Records<br/>по Preservation Policy)]
+    TR -->|оценка продолжается| EXTR[Extraction<br/>entities, relations, claims<br/>+ evidence + content identity]
 
-    GB --> GRAPH[(Graph Store)]
-    GB --> VEC[(Vector Index)]
+    EXTR --> EV[Full Evaluation<br/>EvaluationResult]
+    EV --> DP{Decision Policy<br/>QualificationDecision}
 
-    GRAPH --> SG{Sufficiency Gate}
-    VEC --> SG
+    DP -->|любое решение, включая REJECTED| PRES
+    DP -->|QUALIFIED / CONDITIONAL| KB[Knowledge Builder<br/>Knowledge Product]
 
-    SG -->|нужно продолжение| EXP[Расширение сбора /<br/>уточняющий запрос]
-    SG -->|SUFFICIENT| AN[Analysis]
-    SG -->|PARTIAL / ZERO /<br/>CONFLICT / EXHAUSTED| OUT[Объяснимый outcome<br/>coverage, gaps, conflicts]
+    KB --> GRAPH[(Graph Store)]
+    KB --> VEC[(Vector Index)]
+    KB --> SG{Sufficiency Gate}
+
+    SG -->|success conditions не выполнены,<br/>бюджет остался| EXP[Расширение frontier]
+    SG --> OUT[Research Run Outcome<br/>SUFFICIENT / PARTIAL / ZERO /<br/>CONFLICT / EXHAUSTED]
 
     EXP --> ING
-    AN --> RES[Результат / решение / артефакт]
+    OUT --> CP[Context Package<br/>контракт для потребителя]
+    CP --> AN[Analysis]
 
-    SI -.->|повторное использование<br/>при смене вопроса| GB
+    PRES -.->|повторное использование<br/>при смене вопроса| KB
 ```
 
-Граф и вектор строятся **параллельно** из одного и того же прошедшего gate материала; вектор не
-является следствием построения графа.
+Квалификация разделена на два шага: дешёвый **Triage Evaluation** решает, стоит ли платить за
+Extraction, а **Full Evaluation** оценивает уже извлечённое знание. Решение в обоих случаях
+принимает не Evaluation, а отдельная версионированная **Decision Policy**: `EvaluationResult`
+содержит только именованные характеристики с rationale ([ADR-005](adr/2026-09-adr-005-evaluation-result.md)).
+Отклонённый материал не исчезает: **Preserved Record** с content identity и provenance создаётся для
+каждого оценённого материала независимо от решения, а состав записи задаёт объявленная Preservation
+Policy ([ADR-004](adr/2026-09-adr-004-preservation-policy.md)).
+
+Граф и вектор строятся **параллельно и независимо** из одного и того же квалифицированного потока:
+вектор не является следствием построения графа, ни одно из двух представлений не является
+предусловием другого, и прогон с одним отключённым представлением — или без обоих — даёт тот же
+Research Run document. Sufficiency Gate тоже читает квалифицированный поток напрямую, а не
+результаты индексации.
 
 ## 3. Зоны ответственности
 
@@ -73,11 +91,12 @@ graph TB
         A3[Extraction]
     end
     subgraph Z2["Зона 2 — Selection"]
-        B1[Relevance / Quality Gate]
-        B2[Source Intelligence]
+        B1[Evaluation → EvaluationResult]
+        B2[Decision Policy → QualificationDecision]
+        B3[Preserved Records]
     end
     subgraph Z3["Зона 3 — Representation"]
-        C1[Graph / Context Builder]
+        C1[Knowledge Builder]
         C2[Graph Store]
         C3[Vector Index]
     end
@@ -86,12 +105,13 @@ graph TB
         D2[Human-in-the-loop]
     end
     subgraph Z5["Зона 5 — Consumption"]
-        E1[Analysis]
+        E1[Context Package → Analysis]
     end
     subgraph Z0["Сквозные — Cross-cutting"]
-        X1[Model Router]
-        X2[Telemetry]
-        X3[Config / YAML]
+        X1[Research Run<br/>оркестрация и бюджет]
+        X2[Model Router]
+        X3[Telemetry]
+        X4[Config / YAML]
     end
 
     Z1 --> Z2 --> Z3 --> Z4 --> Z5
@@ -104,48 +124,59 @@ graph TB
 
 | Зона | Владеет | Не имеет права |
 | --- | --- | --- |
-| Acquisition | сбором, хранением сырого материала, извлечением утверждений | строить граф, оценивать релевантность для задачи |
-| Selection | решением `QUALIFIED` / `CONDITIONAL` / `REJECTED` и сохранением отклонённого материала | изменять содержимое claims |
-| Representation | решением, что становится ребром графа, и entity resolution | пере-извлекать данные из источника |
+| Acquisition | сбором, хранением сырого материала, извлечением утверждений с evidence | строить знание, оценивать релевантность для задачи |
+| Selection | измерением характеристик (`EvaluationResult`), решением `QUALIFIED` / `CONDITIONAL` / `REJECTED` и сохранением отклонённого материала | изменять содержимое claims, смешивать оценку с решением |
+| Representation | решением, что становится узлом и ребром, и entity resolution | пере-извлекать данные из источника |
 | Decision | итогом `SUFFICIENT` / `PARTIAL` / `ZERO` / `CONFLICT` / `EXHAUSTED` | делать предметные выводы |
-| Consumption | рассуждением поверх контекста | обращаться к источникам напрямую в обход контракта |
-| Cross-cutting | выбором модели, наблюдаемостью, конфигурацией | принимать решения gates |
+| Consumption | рассуждением поверх Context Package | обращаться к источникам напрямую в обход контракта |
+| Cross-cutting | версиями прогона, бюджетом, выбором модели, наблюдаемостью, конфигурацией | задавать исследовательские критерии и принимать решения gates |
 
-Жёсткое правило: **Parser ≠ Graph Builder ≠ Analysis**. Флаг вида `--build-graph` внутри парсера
-отклонён как нарушение границы зон.
+Жёсткое правило: **Parser ≠ Knowledge Builder ≠ Analysis**. Флаг вида `--build-graph` внутри
+парсера отклонён как нарушение границы зон.
 
 ## 4. Точки вариативности пайплайна
 
 Единый acquisition pipeline конфигурируется в четырёх контрактных точках:
 
 1. **Research Specification** — цель, target и стратегия frontier.
-2. **Evaluation Result + Decision Policy** — измеряемые характеристики и правила вывода решения.
+2. **EvaluationResult + Decision Policy** — измеряемые характеристики и правила вывода решения.
 3. **Preservation Policy** — состав сохраняемого материала, производного знания и истории.
 4. **Termination / Sufficiency Policy** — условия завершения и статус исхода прогона.
 
 Это **контрактные точки вариативности**, а не отдельные runtime-компоненты. Компонентные границы и
-последовательность основного потока данных остаются общими для всех моделей Acquisition.
+последовательность основного потока данных остаются общими для всех моделей Acquisition: в Фазе 1
+`AM-1 Domain Monitoring` и `AM-2 Entity / Relationship Extraction` исполняются одной кодовой базой
+и различаются только Research Specification.
 Research Profile содержит исследовательскую политику, а отдельная Runtime Configuration — модели,
 workers, stores, budgets и retries; смешение этих классов запрещено схемами.
 
-## 5. Логика Relevance Gate
+## 5. Логика квалификации материала
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Evaluation
-    Evaluation: многомерная оценка относительно Research Specification
+    [*] --> Triage
+    Triage: дешёвая ранняя оценка относительно Research Specification
+    Triage --> Extraction: решение не REJECTED
+    Triage --> Rejected: REJECTED до затрат на Extraction
+    Extraction: entities, relations, claims с evidence
+    Extraction --> Evaluation
+    Evaluation: многомерная оценка извлечённого знания
     Evaluation --> EvaluationResult
-    EvaluationResult: именованные характеристики оценки
+    EvaluationResult: именованные характеристики с rationale, без решения
     EvaluationResult --> DecisionPolicy
-    DecisionPolicy: политика квалифицирующего решения
+    DecisionPolicy: версионированные упорядоченные правила
     DecisionPolicy --> Qualified: QUALIFIED
     DecisionPolicy --> Conditional: CONDITIONAL
     DecisionPolicy --> Rejected: REJECTED
-    Qualified --> [*]: в Graph / Context Builder
-    Conditional --> [*]: обработка по политике направления
-    Rejected --> Preserved: Source Intelligence / preserved material according to Preservation Requirements
+    Qualified --> [*]: в Knowledge Builder
+    Conditional --> [*]: в Knowledge Builder с зафиксированными ограничениями
+    Rejected --> Preserved: Preserved Record по Preservation Policy
     Preserved --> [*]
 ```
+
+Обе стадии оценки и оба решения — с идентичностью, версией политики и rationale — попадают в
+Research Run document, поэтому исход прогона восстановим без доступа к содержимому источников.
+Нормативная форма перехода — [`relevance-gate-contract`](standards/relevance-gate-contract.md).
 
 ## 6. Логика Sufficiency Gate
 
@@ -154,39 +185,42 @@ stateDiagram-v2
     [*] --> Evaluate
     Evaluate: completion dimensions из Research Specification
     Evaluate --> Sufficient: success conditions выполнены
-    Evaluate --> Conflict: независимые evidence противоречат
-    Evaluate --> Zero: квалифицируемых данных нет
+    Evaluate --> Conflict: независимые source groups противоречат
+    Evaluate --> Zero: квалифицируемого знания нет
     Evaluate --> Incomplete: остаются gaps
-    Incomplete --> Expand: есть полезное расширение и runtime budget
-    Expand --> Evaluate: повторный сбор и Relevance Gate
+    Incomplete --> Expand: frontier расширяем и runtime budget не исчерпан
+    Expand --> Evaluate: повторный сбор, Evaluation и Decision Policy
     Incomplete --> Partial: полезный неполный результат
     Incomplete --> Exhausted: runtime budget исчерпан
-    Sufficient --> [*]: SUFFICIENT → Analysis
+    Sufficient --> [*]: SUFFICIENT → Context Package
     Partial --> [*]: PARTIAL + gaps
     Zero --> [*]: ZERO + rationale
     Conflict --> [*]: CONFLICT + source groups
     Exhausted --> [*]: EXHAUSTED + consumed budget
 ```
 
-Цикл `Incomplete → Expand → Evaluate` ограничен Runtime Configuration. Итог различает неполноту,
-отсутствие данных, противоречие и исчерпание ресурсов; каждый статус содержит coverage, gaps,
-conflicts, recommended expansion и rationale.
+Цикл `Incomplete → Expand → Evaluate` ограничен Runtime Configuration: числовые лимиты
+(`max_iterations`, `max_cost_rub`) приходят только оттуда, исследовательские критерии — только из
+Research Specification. Итог различает неполноту, отсутствие данных, противоречие и исчерпание
+ресурсов; каждый статус содержит coverage, gaps, conflicts, recommended expansion и rationale и
+передаётся потребителю в составе Context Package.
 
 ## 7. Экономика по ролям операций
 
 ```mermaid
 graph LR
-    E[Extraction<br/>cost-sensitive] --> G[Graph Building<br/>mid-tier] --> A[Analysis<br/>quality-first]
+    T[Triage Evaluation<br/>cheapest] --> E[Extraction<br/>cost-sensitive] --> K[Knowledge Building<br/>mid-tier] --> A[Analysis<br/>quality-first]
 ```
 
 | Шаг | Профиль | Приёмы снижения стоимости |
 | --- | --- | --- |
+| Triage evaluation | cheapest | оценка без Extraction, отсев до дорогих шагов |
 | Extraction | cost-sensitive | дешёвые модели, batch API (−50 %), prompt caching (−90 %), semantic caching |
-| Graph building | mid-tier | батчирование, дедупликация сущностей |
-| Analysis | quality-first | вход ограничен прошедшим оба gate контекстом |
+| Knowledge building | mid-tier | батчирование, дедупликация сущностей |
+| Analysis | quality-first | вход ограничен квалифицированным и достаточным контекстом |
 
-Relevance Gate — главный рычаг экономики: он определяет, какая доля собранного вообще доходит до
-дорогого шага.
+Главный рычаг экономики — квалификация: Triage Evaluation определяет, какая доля собранного вообще
+доходит до Extraction, а Decision Policy — какая доля извлечённого доходит до Analysis.
 
 ## 8. Развёртывание
 
@@ -241,7 +275,11 @@ graph LR
 ## 10. Связанные артефакты
 
 - [`docs/concept.md`](concept.md) — компоненты и контракты
+- [`docs/standards/glossary.md`](standards/glossary.md) — единственный источник истины для терминов
 - [`docs/standards/research-specification-contract.md`](standards/research-specification-contract.md)
 - [`docs/standards/preservation-contract.md`](standards/preservation-contract.md)
+- [`docs/standards/sufficiency-gate-contract.md`](standards/sufficiency-gate-contract.md)
 - [`configs/schemas/`](../configs/schemas/) — исполняемые схемы контрактов
 - [`docs/adr/README.md`](adr/README.md) — технические решения
+- [`docs/running-locally.md`](running-locally.md) — как исполнить описанный поток локально
+- [`docs/roadmap.md`](roadmap.md) — состояние фаз и границы Фазы 1

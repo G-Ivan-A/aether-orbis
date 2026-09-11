@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.4
-updated: 2026-09-10
+version: 0.5
+updated: 2026-09-11
 temperature: 0.2
 ---
 
@@ -54,11 +54,11 @@ Monitoring` и `AM-2 Entity / Relationship Extraction` — с конфигури
 `content_hash`; `observation_history` принимает только значение `latest_only`; профиль `archival`
 применяется только при явном указании в конфигурации.
 
-| Задача | Результат |
-| --- | --- |
-| P1-A Контракты и исполнимые Research Specifications ([#35](https://github.com/G-Ivan-A/aether-orbis/issues/35)) | схемы и контракты v1.0, валидируемые профили AM-1/AM-2, примеры выразимости AM-1…AM-5 |
-| P1-B Acquisition core ([#36](https://github.com/G-Ivan-A/aether-orbis/issues/36)) | ingestion, extraction, evaluation и preservation из Research Specification |
-| P1-C Persistence, orchestration и end-to-end доказательство ([#37](https://github.com/G-Ivan-A/aether-orbis/issues/37)) | graph/vector representations, Research Run и сквозные прогоны AM-1/AM-2 |
+| Задача | Результат | Статус |
+| --- | --- | --- |
+| P1-A Контракты и исполнимые Research Specifications ([#35](https://github.com/G-Ivan-A/aether-orbis/issues/35)) | схемы и контракты v1.0, валидируемые профили AM-1/AM-2, примеры выразимости AM-1…AM-5 | завершена |
+| P1-B Acquisition core ([#36](https://github.com/G-Ivan-A/aether-orbis/issues/36)) | ingestion, extraction, evaluation и preservation из Research Specification | завершена |
+| P1-C Persistence, orchestration и end-to-end доказательство ([#37](https://github.com/G-Ivan-A/aether-orbis/issues/37)) | graph/vector representations, Research Run и сквозные прогоны AM-1/AM-2 | завершена |
 
 **P1-A Definition of Done:** контракты согласованы с ADR-004/005/006; положительные и негативные
 fixtures, два исполняемых профиля, отдельный runtime-конфиг и пять аналитических примеров проходят
@@ -77,8 +77,11 @@ CI. Реализация ingestion, LLM, persistence и end-to-end прогон�
 [`extraction-contract`](standards/extraction-contract.md); выбор графовой БД зафиксирован в
 [ADR-001](adr/2026-08-adr-001-tech-stack.md), пункт 2.
 
-**Риски:** слепое доверие OSS-решениям; недооценка качества извлечения. Митигация — T1.1 и
-evaluation фазы 2.
+**Статус:** завершена. P1-A, P1-B и P1-C закрыты; сквозные прогоны AM-1 и AM-2 входят в CI
+(`.github/workflows/ci.yml`, шаг «Run AM-1 and AM-2 end to end»).
+
+**Открытые риски фазы:** качество извлечения измерено только на оффлайн-фикстурах со словарным
+адаптером — оценка на реальных моделях переносится в [T2.3](https://github.com/G-Ivan-A/aether-orbis/issues/11).
 
 ## Фаза 2 — Адаптация под модели РФ/Китая и YAML-конфигурации
 
@@ -101,12 +104,16 @@ evaluation фазы 2.
 
 | Задача | Результат |
 | --- | --- |
-| T3.1 Реализация Relevance Gate по контракту | решения, Source Intelligence |
+| T3.1 Квалификация материала по контракту на целевых моделях ([relevance-gate-contract](standards/relevance-gate-contract.md)) | `EvaluationResult`, `QualificationDecision` и Preserved Records вне оффлайн-фикстур |
 | T3.2 Реализация Sufficiency Gate по контракту | `SUFFICIENT` / `PARTIAL` / `ZERO` / `CONFLICT` / `EXHAUSTED` с объяснением |
 | T3.3 Телеметрия по контракту | события на каждом переходе, сводка прогона |
 | T3.4 Публичный API на FastAPI | эндпоинты запуска прогона и получения контекста |
 | T3.5 Обязательная 2FA (TOTP или IAM) | защищённый доступ |
 | T3.6 Точки human-in-the-loop (заглушки) | логируемые события `hitl` |
+
+Ядро обоих переходов исполняется с фазы 1 (`src/aether_orbis/evaluation.py`,
+`src/aether_orbis/sufficiency.py`); T3.1–T3.2 доводят их до работы на целевых моделях и внешнем
+контуре, а не создают с нуля.
 
 **Definition of Done:** оба gate работают по контрактам; телеметрия пишется по каждому переходу;
 публичные эндпоинты недоступны без второго фактора.
@@ -178,10 +185,11 @@ git; восстановление из резервной копии прове�
 | Риск | Митигация |
 | --- | --- |
 | Scope creep | границы зафиксированы в `docs/vision.md`, расширение — через RFC |
-| Слишком тяжёлая инфраструктура на старте | serverless-first, отложенный выбор графовой БД |
+| Слишком тяжёлая инфраструктура на старте | serverless-first; выбор графового хранилища закрыт [ADR-001](adr/2026-08-adr-001-tech-stack.md) (пункт 2) по измерениям [`analysis/2026-09-10-graph-store-selection.md`](analysis/2026-09-10-graph-store-selection.md) |
 | Недостаточная валидация качества извлечения на моделях РФ/Китая | T2.3 evaluation с порогами |
-| Отсутствие quality gates между этапами | оба gate закреплены контрактами до реализации |
-| Слепое доверие OSS-решениям | T1.1 и резервный кандидат по каждому компоненту |
+| Отсутствие quality gates между этапами | оба gate закреплены контрактами; квалификация и Sufficiency Gate исполняются с фазы 1 |
+| Слепое доверие OSS-решениям | внешние зависимости изолированы портами `src/aether_orbis/ports.py`; выбор кандидатов обоснован в [`analysis/2026-09-10-acquisition-oss-candidates.md`](analysis/2026-09-10-acquisition-oss-candidates.md) |
+| Качество извлечения подтверждено только на оффлайн-фикстурах | evaluation на целевых моделях в [T2.3](https://github.com/G-Ivan-A/aether-orbis/issues/11) с порогами приемлемости |
 | Оптимистичные оценки сроков | планирование по ~10 дней на фазу с буфером |
 
 ## Связанные артефакты
