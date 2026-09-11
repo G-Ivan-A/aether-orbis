@@ -1,0 +1,10 @@
+{
+  "Example Organization": [
+    {
+      "url": "https://blog.unknown.example/rumours/example-organization",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:10:10Z",
+      "payload_file": "rumour-blog.html"
+    }
+  ]
+}

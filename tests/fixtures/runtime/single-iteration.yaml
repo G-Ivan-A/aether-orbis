@@ -1,0 +1,22 @@
+# Runtime Configuration that stops a run after one iteration.
+# Only the numeric limits differ from configs/runtime/default.yaml: the point of
+# the fixture is that exhausting a budget is a runtime concern and never a change
+# to the Research Specification (sufficiency-gate-contract O-5).
+runtime_id: phase-1-single-iteration
+runtime_version: "1.0"
+models:
+  extraction: cost-sensitive
+  triage: cost-sensitive
+  full_evaluation: mid-tier
+  knowledge_building: mid-tier
+workers:
+  concurrency: 1
+stores:
+  source: object-store
+  knowledge: graph-store
+  retrieval: vector-index
+budgets:
+  max_iterations: 1
+  max_cost_rub: 150
+retries:
+  max_attempts: 3

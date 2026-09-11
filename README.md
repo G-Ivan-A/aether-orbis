@@ -13,10 +13,12 @@ Spoke-репозиторий экосистемы
 
 ## Статус
 
-Основа контрактов P1-A реализована: JSON Schemas, позитивные и негативные fixtures, два исполняемых
-профиля Phase 1 (`AM-1`, `AM-2`), отдельная Runtime Configuration и примеры общей Research
-Specification для `AM-1`…`AM-5`. Acquisition runtime и end-to-end исполнение остаются задачами
-P1-B/P1-C — см. [`docs/roadmap.md`](docs/roadmap.md).
+Фаза 1 исполняется целиком: Research Run проходит от локальной фикстуры до Context Package и обоих
+представлений на двух направлениях (`AM-1`, `AM-2`), различающихся только Research Specification.
+Каждый прогон завершается одним из пяти явных статусов, а недостаточность сообщается, а не
+подменяется сгенерированным ответом. Точные команды — в
+[`docs/running-locally.md`](docs/running-locally.md), границы фазы 1 — там же и в
+[`docs/roadmap.md`](docs/roadmap.md).
 
 ## С чего начать
 
@@ -27,6 +29,7 @@ P1-B/P1-C — см. [`docs/roadmap.md`](docs/roadmap.md).
 | Как идут данные и где границы зон | [`docs/architecture.md`](docs/architecture.md) |
 | Какие решения приняты и почему | [`docs/adr/README.md`](docs/adr/README.md) |
 | Какие контракты обязаны соблюдать компоненты | [`docs/standards/`](docs/standards/) |
+| Как запустить прогон локально | [`docs/running-locally.md`](docs/running-locally.md) |
 | Что делается дальше | [`docs/roadmap.md`](docs/roadmap.md) |
 
 ## Пайплайн
@@ -49,11 +52,11 @@ Sources → Acquisition → Extraction → EvaluationResult → Decision Policy
 | --- | --- |
 | `docs/` | документация уровней 1–4, ADR, контракты |
 | `configs/` | JSON Schemas, Research Profiles и отдельная Runtime Configuration |
-| `src/aether_orbis/` | исходный код (наполняется с фазы 1) |
+| `src/aether_orbis/` | исходный код: ядро на stdlib, порты и оффлайн-адаптеры |
 | `tests/` | контрактные unit tests и позитивные/негативные fixtures |
 | `tools/` | служебные скрипты, в т.ч. валидация именования файлов |
 | `experiments/` | экспериментальные скрипты |
-| `examples/` | валидируемые Research Specification для AM-1…AM-5 |
+| `examples/` | валидируемые Research Specification и локальные прогоны AM-1/AM-2 |
 | `.github/workflows/` | CI |
 
 ## Локальная проверка
@@ -62,6 +65,7 @@ Sources → Acquisition → Extraction → EvaluationResult → Decision Policy
 python3 -m pip install --user -r requirements-dev.txt
 python3 tools/validate-contracts.py
 python3 -m unittest discover -s tests -v
+python3 examples/research-runs/local_research_run.py
 ```
 
 Полный набор проверок указан в [`CONTRIBUTING.md`](CONTRIBUTING.md); схема Research Specification

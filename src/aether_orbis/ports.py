@@ -17,6 +17,8 @@ from aether_orbis.model import (
     NormalizedSource,
     RawMaterial,
 )
+from aether_orbis.representations import GraphProjection, VectorChunk
+from aether_orbis.sufficiency import CompletionState
 
 
 @runtime_checkable
@@ -60,6 +62,48 @@ class CharacteristicEvaluator(Protocol):
         dimensions: tuple[str, ...],
     ) -> dict[str, Measurement]:
         """Return a measurement per characteristic name."""
+
+
+@runtime_checkable
+class GraphStore(Protocol):
+    """Indexes the graph representation of the qualified knowledge stream.
+
+    ADR-001 (4) keeps graph and vector parallel, so this port knows nothing about
+    :class:`VectorIndex`: a run with only one of the two configured still
+    completes.
+    """
+
+    def index_graph(self, projection: GraphProjection) -> None:
+        """Index *projection*; repeating the same projection MUST be idempotent."""
+
+    def provenance(self, node_id: str) -> tuple[dict[str, Any], ...]:
+        """Return the provenance of every edge that touches *node_id*."""
+
+
+@runtime_checkable
+class VectorIndex(Protocol):
+    """Indexes the vector representation of the same knowledge stream."""
+
+    def index_chunks(self, chunks: Iterable[VectorChunk]) -> None:
+        """Index *chunks*; repeating the same chunks MUST be idempotent."""
+
+    def search(self, query: str, limit: int = 5) -> tuple[VectorChunk, ...]:
+        """Return the chunks most similar to *query*, best match first."""
+
+
+@runtime_checkable
+class CompletionEvaluator(Protocol):
+    """Measures the completion dimensions declared by a Research Specification.
+
+    The names are supplied by the caller and originate from
+    ``termination.completion_dimensions``; the port never invents its own
+    (sufficiency-gate-contract O-3).
+    """
+
+    def measure_completion(
+        self, state: CompletionState, dimensions: tuple[str, ...]
+    ) -> dict[str, Measurement]:
+        """Return a measurement per completion dimension name."""
 
 
 @runtime_checkable

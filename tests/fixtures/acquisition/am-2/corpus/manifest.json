@@ -18,5 +18,13 @@
       "retrieved_at": "2026-09-10T08:10:10Z",
       "payload_file": "rumour-blog.html"
     }
+  ],
+  "Example Registry": [
+    {
+      "url": "https://registry.example.org/entities/example-registry",
+      "media_type": "text/html",
+      "retrieved_at": "2026-09-10T08:11:00Z",
+      "payload_file": "registry-profile.html"
+    }
   ]
 }

@@ -32,3 +32,5 @@ jobs:
         run: python3 tools/validate-contracts.py
       - name: Run tests
         run: python3 -m unittest discover -s tests -v
+      - name: Run AM-1 and AM-2 end to end
+        run: python3 examples/research-runs/local_research_run.py

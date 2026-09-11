@@ -72,9 +72,11 @@ def load_specification(model: str) -> dict[str, Any]:
 
 
 def _am1_pipeline(specification: dict[str, Any], **overrides: Any) -> AcquisitionPipeline:
+    overrides.setdefault(
+        "fetcher", CorpusFetcher.from_directory(ACQUISITION / "am-1" / "corpus")
+    )
     return AcquisitionPipeline(
         specification=specification,
-        fetcher=CorpusFetcher.from_directory(ACQUISITION / "am-1" / "corpus"),
         parser=HtmlTextParser(),
         extractor=DictionaryExtractor(
             entities=AM1_ENTITIES,
@@ -95,9 +97,11 @@ def _am1_pipeline(specification: dict[str, Any], **overrides: Any) -> Acquisitio
 
 
 def _am2_pipeline(specification: dict[str, Any], **overrides: Any) -> AcquisitionPipeline:
+    overrides.setdefault(
+        "fetcher", CorpusFetcher.from_directory(ACQUISITION / "am-2" / "corpus")
+    )
     return AcquisitionPipeline(
         specification=specification,
-        fetcher=CorpusFetcher.from_directory(ACQUISITION / "am-2" / "corpus"),
         parser=HtmlTextParser(),
         extractor=DictionaryExtractor(
             entities=AM2_ENTITIES,
@@ -122,7 +126,11 @@ BUILDERS = {"am-1": _am1_pipeline, "am-2": _am2_pipeline}
 
 
 def build_pipeline(model: str, **overrides: Any) -> AcquisitionPipeline:
-    """Return the offline pipeline configured for the given fixture model."""
+    """Return the offline pipeline configured for the given fixture model.
+
+    Every port can be overridden, which is how a caller points the same wiring at
+    a different corpus without adding a second code path.
+    """
 
     specification = load_specification(model)
     return BUILDERS[model](specification, **overrides)

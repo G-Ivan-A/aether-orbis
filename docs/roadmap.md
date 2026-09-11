@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.3
-updated: 2026-09-09
+version: 0.4
+updated: 2026-09-10
 temperature: 0.2
 ---
 
@@ -57,16 +57,25 @@ Monitoring` и `AM-2 Entity / Relationship Extraction` — с конфигури
 | Задача | Результат |
 | --- | --- |
 | P1-A Контракты и исполнимые Research Specifications ([#35](https://github.com/G-Ivan-A/aether-orbis/issues/35)) | схемы и контракты v1.0, валидируемые профили AM-1/AM-2, примеры выразимости AM-1…AM-5 |
-| P1-B Acquisition core | ingestion, extraction, evaluation и preservation из Research Specification |
-| P1-C Persistence, orchestration и end-to-end доказательство | graph/vector representations, Research Run и сквозные прогоны AM-1/AM-2 |
+| P1-B Acquisition core ([#36](https://github.com/G-Ivan-A/aether-orbis/issues/36)) | ingestion, extraction, evaluation и preservation из Research Specification |
+| P1-C Persistence, orchestration и end-to-end доказательство ([#37](https://github.com/G-Ivan-A/aether-orbis/issues/37)) | graph/vector representations, Research Run и сквозные прогоны AM-1/AM-2 |
 
 **P1-A Definition of Done:** контракты согласованы с ADR-004/005/006; положительные и негативные
 fixtures, два исполняемых профиля, отдельный runtime-конфиг и пять аналитических примеров проходят
 CI. Реализация ingestion, LLM, persistence и end-to-end прогона остаётся в P1-B/P1-C.
 
-**Definition of Done всей Фазы 1:** один прогон от источника до контекста проходит целиком; выдача
-Extraction проходит валидацию по [`extraction-contract`](standards/extraction-contract.md); выбор
-графовой БД зафиксирован в ADR-001.
+**P1-C Definition of Done:** эксперимент по графовому хранилищу воспроизводим из `experiments/`, его
+результаты и ограничения зафиксированы в
+[`analysis/2026-09-10-graph-store-selection.md`](analysis/2026-09-10-graph-store-selection.md);
+граф и вектор индексируют один поток независимо; Research Run — отдельная сущность с версиями,
+хэшами, решениями, итерациями и бюджетом; каждый прогон завершается одним из пяти статусов;
+сквозные прогоны AM-1/AM-2 выполняются одной командой без сети и секретов и входят в CI.
+
+**Definition of Done всей Фазы 1 — выполнено:** прогон от источника до контекста проходит целиком
+(`examples/research-runs/local_research_run.py`, см.
+[`running-locally.md`](running-locally.md)); выдача Extraction проходит валидацию по
+[`extraction-contract`](standards/extraction-contract.md); выбор графовой БД зафиксирован в
+[ADR-001](adr/2026-08-adr-001-tech-stack.md), пункт 2.
 
 **Риски:** слепое доверие OSS-решениям; недооценка качества извлечения. Митигация — T1.1 и
 evaluation фазы 2.
