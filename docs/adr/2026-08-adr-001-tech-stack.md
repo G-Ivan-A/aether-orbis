@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 0.2
-updated: 2026-09-10
+version: 0.3
+updated: 2026-10-22
 temperature: 0.1
 owner: G-Ivan-A
 decision-type: product
@@ -20,7 +20,7 @@ decision-type: product
 | Owner | G-Ivan-A |
 | Source | SSOT v4.3 (материалы подготовительного R&D BUILD-01) |
 | Impacted artifacts | `docs/concept.md`, `docs/architecture.md`, `docs/roadmap.md`, `docs/standards/*` |
-| Revisions | 0.2 (2026-09-10): пункт 2 заменён явным выбором графового хранилища по результатам эксперимента фазы 1 |
+| Revisions | 0.2 (2026-09-10): пункт 2 заменён явным выбором графового хранилища по результатам эксперимента фазы 1; 0.3 (2026-10-22): аннотирован конфликт строки Observability с ресурсным бюджетом общего хоста (issue [#44](https://github.com/G-Ivan-A/aether-orbis/issues/44)); выбор не изменён |
 | Supersedes | — |
 | Superseded by | — |
 
@@ -53,6 +53,13 @@ AetherOrbis строится по принципу «интеграция гот
    | Observability | Langfuse | — |
    | API | FastAPI | — |
    | Маршрутизация моделей | LiteLLM | собственный proxy-слой (см. [ADR-002](2026-08-adr-002-model-routing.md)) |
+
+   > **Конфликт К-6 (issue #44).** Langfuse v3 в self-host требует Postgres, ClickHouse, Redis и
+   > S3-хранилище; на общем хосте это сопоставимо с бюджетом целого проекта. Предложенная правка
+   > строки Observability — «Langfuse — целевой бэкенд по триггеру T-OBS; до него — sink по
+   > [telemetry-contract](../standards/telemetry-contract.md)»
+   > ([ADR-007](2026-10-adr-007-multi-project-deployment-topology.md) п. 6, proposed). Контракт
+   > телеметрии от этого не меняется.
 
 2. **Графовым движком выбран Kuzu** — по результатам эксперимента фазы 1
    ([`docs/analysis/2026-09-10-graph-store-selection.md`](../analysis/2026-09-10-graph-store-selection.md),
@@ -148,5 +155,6 @@ ADR пересматривается: (1) когда объём графа вы�
 - [`docs/concept.md`](../concept.md), раздел 8
 - [ADR-002: Маршрутизация моделей](2026-08-adr-002-model-routing.md)
 - [ADR-003: Инфраструктура](2026-08-adr-003-infrastructure.md)
+- [ADR-007: Топология развёртывания нескольких проектов](2026-10-adr-007-multi-project-deployment-topology.md) (proposed) — триггер T-OBS для Langfuse
 - [`docs/roadmap.md`](../roadmap.md), фазы 1–2
 - [`docs/analysis/2026-09-10-graph-store-selection.md`](../analysis/2026-09-10-graph-store-selection.md) — эксперимент, снявший отложенность пункта 2
