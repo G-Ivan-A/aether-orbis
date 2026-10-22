@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.3
-updated: 2026-09-11
+version: 0.4
+updated: 2026-10-22
 temperature: 0.2
 ---
 
@@ -12,7 +12,8 @@ temperature: 0.2
 значении [`docs/standards/glossary.md`](standards/glossary.md).
 
 Разделы 2–7 отражают реализацию Фазы 1 (`src/aether_orbis/`), разделы 8–9 — целевое развёртывание
-по [ADR-003](adr/2026-08-adr-003-infrastructure.md), которое ещё не выполнено.
+по [ADR-003](adr/2026-08-adr-003-infrastructure.md), которое ещё не выполнено; раздел 8.1 —
+предложенная мульти-проектная топология по ADR-007 / ADR-008 (статус `proposed`).
 
 ## 1. Контекстная диаграмма
 
@@ -252,6 +253,57 @@ graph TB
 Обоснование serverless-first, требований юрисдикции РФ и обязательной 2FA — см.
 [ADR-003](adr/2026-08-adr-003-infrastructure.md).
 
+### 8.1. Предложенная топология: общий хост нескольких проектов
+
+Действует при принятии [ADR-007](adr/2026-10-adr-007-multi-project-deployment-topology.md) и
+[ADR-008](adr/2026-10-adr-008-inter-project-api-contract.md); обоснование, сравнение юрисдикций и
+бюджет ресурсов — в [RFC](rfc/2026-10-multi-project-vps-platform.md). Схема описывает границы и
+потоки, а не конфигурацию: deploy-артефакты в этом репозитории не хранятся (раздел 9).
+
+```mermaid
+graph TB
+    subgraph RF["РФ — хост ступени 0 (все классы данных)"]
+        RP[Reverse proxy: TLS, rate limit, auth]
+        subgraph PA["Контур AetherOrbis (лимиты ADR-007 п. 4)"]
+            A1[API — Job API ADR-008]
+            A2[Workers]
+            A3[(Graph / Vector / Raw — свой том)]
+        end
+        subgraph PB["Контур проекта BA"]
+            B1[Сервис BA]
+        end
+        subgraph PC["Контур третьего проекта"]
+            C1[Сервис]
+        end
+        MON[Мониторинг хоста и контейнеров — триггеры]
+    end
+    subgraph RF2["РФ — второй провайдер"]
+        S3[(S3: бэкап, шифрование на клиенте)]
+    end
+    subgraph OPT["Опция C2 по триггеру T-COST / T-CEIL"]
+        X1[Зарубежный хост — только D0 / D1]
+    end
+    subgraph EXTP["Внешние провайдеры"]
+        P1[Модели RF / China]
+    end
+
+    U[Человек — 2FA] --> RP
+    B1 -->|Job API, per-caller токен / mTLS| RP
+    RP --> A1
+    A1 --> A2
+    A2 --> A3
+    A2 <--> P1
+    A3 -->|зашифрованный бэкап| S3
+    MON -.-> PA
+    MON -.-> PB
+    MON -.-> PC
+    A2 -.->|только D0 / D1| X1
+```
+
+Проекты не обращаются к хранилищам друг друга: единственный путь между контурами — опубликованный
+контракт через reverse proxy (ADR-008 п. 1). Переход на брокер (триггер T-QUEUE) меняет транспорт
+за портом, но не контракт.
+
 ## 9. Граница репозитория и runtime
 
 ```mermaid
@@ -281,5 +333,6 @@ graph LR
 - [`docs/standards/sufficiency-gate-contract.md`](standards/sufficiency-gate-contract.md)
 - [`configs/schemas/`](../configs/schemas/) — исполняемые схемы контрактов
 - [`docs/adr/README.md`](adr/README.md) — технические решения
+- [ADR-007](adr/2026-10-adr-007-multi-project-deployment-topology.md), [ADR-008](adr/2026-10-adr-008-inter-project-api-contract.md), [RFC мульти-проектной платформы](rfc/2026-10-multi-project-vps-platform.md) — предложенная топология и межпроектный API (proposed)
 - [`docs/running-locally.md`](running-locally.md) — как исполнить описанный поток локально
 - [`docs/roadmap.md`](roadmap.md) — состояние фаз и границы Фазы 1
