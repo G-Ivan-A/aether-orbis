@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.3
-updated: 2026-09-09
+version: 0.4
+updated: 2026-10-22
 temperature: 0.1
 ---
 
@@ -20,6 +20,8 @@ temperature: 0.1
 | ADR-004 | Preservation Policy: независимые измерения вместо линейной шкалы | product | accepted | [2026-09-adr-004-preservation-policy.md](2026-09-adr-004-preservation-policy.md) |
 | ADR-005 | Evaluation Result и отделение decision layer | product | accepted | [2026-09-adr-005-evaluation-result.md](2026-09-adr-005-evaluation-result.md) |
 | ADR-006 | Обобщённая Research Specification и состояния исхода прогона | product | accepted | [2026-09-adr-006-research-specification.md](2026-09-adr-006-research-specification.md) |
+| ADR-007 | Топология развёртывания нескольких проектов на одном хосте, изоляция и суверенитет данных | runtime | proposed | [2026-10-adr-007-multi-project-deployment-topology.md](2026-10-adr-007-multi-project-deployment-topology.md) |
+| ADR-008 | Межпроектный API-контракт: асинхронный Job API, переносимый на брокер | runtime | proposed | [2026-10-adr-008-inter-project-api-contract.md](2026-10-adr-008-inter-project-api-contract.md) |
 
 ## Соответствие исходной постановке задачи
 
@@ -41,3 +43,11 @@ ADR-004, ADR-005 и ADR-006 приняты после review на основан
 Исполняемые изменения контрактов в
 [`docs/standards/`](https://github.com/G-Ivan-A/aether-orbis/tree/main/docs/standards)
 выполняются в рамках Phase 1 P1-A.
+
+## Предложенные ADR мульти-проектной платформы (issue [#44](https://github.com/G-Ivan-A/aether-orbis/issues/44))
+
+ADR-007 и ADR-008 предложены на основании
+[RFC: Общая платформа развёртывания нескольких ИИ-проектов](../rfc/2026-10-multi-project-vps-platform.md)
+и [анализа конфликтов](../analysis/2026-10-22-multi-project-vps-constraints.md). При принятии они
+частично замещают ADR-003 (пункты 1–4 и раздел миграции) и уточняют ADR-001 (observability);
+конфликты аннотированы в тексте этих ADR, решения ADR-003 и ADR-001 до принятия не меняются.
