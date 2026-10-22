@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Проверка frontmatter-контракта Хаба для активных markdown-артефактов AetherOrbis.
 # Требования: status, version, updated, temperature; owner для governance-артефактов;
-# decision-type для ADR; поле ai-generated запрещено.
+# decision-type для ADR; rfc-scope для RFC; поле ai-generated запрещено.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -12,6 +12,7 @@ fail() { printf 'ERROR: %s\n' "$1" >&2; failures=$((failures + 1)); }
 
 KNOWLEDGE_STATUSES="draft reviewed canonical superseded"
 GOVERNANCE_STATUSES="draft proposed accepted rejected deprecated superseded"
+RFC_SCOPES="A B C D multi"
 
 has_field() { grep -qE "^$2:" "$1"; }
 field_value() { sed -n "s/^$2:[[:space:]]*//p" "$1" | head -1; }
@@ -46,11 +47,17 @@ check_file() {
   if [[ "$file" == docs/adr/*adr-* ]]; then
     has_field "$file" decision-type || fail "missing frontmatter field 'decision-type': $file"
   fi
+
+  if [[ "$file" == docs/rfc/* ]]; then
+    local scope
+    scope="$(field_value "$file" rfc-scope)"
+    in_list "$scope" "$RFC_SCOPES" || fail "invalid or missing rfc-scope '$scope': $file"
+  fi
 }
 
 while IFS= read -r file; do
   check_file "$file" governance "$GOVERNANCE_STATUSES"
-done < <(find docs/adr docs/standards -type f -name '*.md' ! -name 'README.md' | sort)
+done < <(find docs/adr docs/rfc docs/standards -type f -name '*.md' ! -name 'README.md' | sort)
 
 while IFS= read -r file; do
   basename="${file##*/}"

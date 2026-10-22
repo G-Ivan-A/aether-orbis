@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.4
-updated: 2026-09-10
+version: 0.5
+updated: 2026-10-22
 temperature: 0.1
 ---
 
@@ -18,6 +18,7 @@ temperature: 0.1
 | L4 | [`adr/README.md`](adr/README.md) | реестр архитектурных решений |
 | L4 | [`standards/`](standards/) | контракты границ компонентов |
 | L2 | [`analysis/`](analysis/) | аналитические документы, обосновывающие изменения контрактов |
+| L4 | [`rfc/`](rfc/) | предложения с открытыми альтернативами и межрепозиторными последствиями |
 | — | [`running-locally.md`](running-locally.md) | точные команды локального прогона и границы фазы 1 |
 | — | [`roadmap.md`](roadmap.md) | фазы 0–5, задачи и зависимости, риски |
 
@@ -31,6 +32,11 @@ temperature: 0.1
   Evaluation Result и Decision Policy.
 - [`adr/2026-09-adr-006-research-specification.md`](adr/2026-09-adr-006-research-specification.md) —
   Research Specification и исходы прогона.
+- [`rfc/2026-10-multi-project-vps-platform.md`](rfc/2026-10-multi-project-vps-platform.md) —
+  общая платформа нескольких ИИ-проектов на одном VPS (proposed), решения —
+  [`adr/2026-10-adr-007-multi-project-deployment-topology.md`](adr/2026-10-adr-007-multi-project-deployment-topology.md)
+  и [`adr/2026-10-adr-008-inter-project-api-contract.md`](adr/2026-10-adr-008-inter-project-api-contract.md);
+  доказательная база — [`analysis/2026-10-22-multi-project-vps-constraints.md`](analysis/2026-10-22-multi-project-vps-constraints.md).
 
 ## Контракты
 
@@ -65,10 +71,11 @@ temperature: 0.1
 ## Frontmatter
 
 Каждый активный markdown-артефакт содержит `status`, `version`, `updated`, `temperature`;
-governance-артефакты (ADR, контракты) дополнительно — `owner`, ADR — `decision-type`.
+governance-артефакты (ADR, RFC, контракты) дополнительно — `owner`, ADR — `decision-type`,
+RFC — `rfc-scope`.
 Поле `ai-generated` запрещено. Словари статусов:
 
 | Класс | Допустимые статусы |
 | --- | --- |
 | Knowledge (vision, concept, architecture, roadmap, analysis) | `draft`, `reviewed`, `canonical`, `superseded` |
-| Governance (adr, standards) | `draft`, `proposed`, `accepted`, `rejected`, `deprecated`, `superseded` |
+| Governance (adr, rfc, standards) | `draft`, `proposed`, `accepted`, `rejected`, `deprecated`, `superseded` |

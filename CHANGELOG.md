@@ -7,6 +7,12 @@
 
 ### Added
 
+- Мульти-проектная платформа (issue #44), статус `proposed`: RFC
+  `docs/rfc/2026-10-multi-project-vps-platform.md` (сравнение юрисдикций РФ / нейтральная / гибрид,
+  бюджет ресурсов общего хоста, паттерны межпроектного API), ADR-007 (топология, классы данных
+  D0–D2/S, изоляция, бэкап, триггеры масштабирования) и ADR-008 (асинхронный Job API, CloudEvents,
+  переносимость на брокер), анализ ограничений `docs/analysis/2026-10-22-multi-project-vps-constraints.md`.
+- `tools/validate-frontmatter.sh` проверяет RFC в `docs/rfc/`, включая поле `rfc-scope`.
 - Persistence и оркестрация P1-C: параллельные graph/vector представления одного
   квалифицированного потока за портами `GraphStore` и `VectorIndex`, Research Run как отдельная
   сущность (версии спецификации, конфигурации и адаптеров, хэши обработанного контента, решения
@@ -53,6 +59,9 @@
 
 ### Changed
 
+- ADR-003 (0.2) и ADR-001 (0.3) аннотированы конфликтами К-1…К-6 с мульти-проектной средой и
+  предложенными правками; текст решений не изменён до принятия ADR-007 / ADR-008. В роадмап добавлена
+  предлагаемая редакция фазы 5 и риски общего хоста, в архитектуру — раздел 8.1.
 - `docs/architecture.md` (0.3) синхронизирован с кодом Фазы 1: устаревшие `Relevance Gate` и
   `Graph / Context Builder` заменены на `Triage Evaluation` → `Extraction` → `EvaluationResult` →
   `Decision Policy` → `QualificationDecision` → `Knowledge Builder` / `Knowledge Product`, поток
