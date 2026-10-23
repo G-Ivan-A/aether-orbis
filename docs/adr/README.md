@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.4
-updated: 2026-10-22
+version: 0.5
+updated: 2026-10-23
 temperature: 0.1
 ---
 
@@ -22,6 +22,7 @@ temperature: 0.1
 | ADR-006 | Обобщённая Research Specification и состояния исхода прогона | product | accepted | [2026-09-adr-006-research-specification.md](2026-09-adr-006-research-specification.md) |
 | ADR-007 | Топология развёртывания нескольких проектов на одном хосте, изоляция и суверенитет данных | runtime | proposed | [2026-10-adr-007-multi-project-deployment-topology.md](2026-10-adr-007-multi-project-deployment-topology.md) |
 | ADR-008 | Межпроектный API-контракт: асинхронный Job API, переносимый на брокер | runtime | proposed | [2026-10-adr-008-inter-project-api-contract.md](2026-10-adr-008-inter-project-api-contract.md) |
+| ADR-009 | Анонимизация на границе и дешёвый гибрид «узел РФ + зарубежные вычисления» для ПДн из публичных источников | runtime | proposed | [2026-10-adr-009-edge-anonymization-and-lean-hybrid.md](2026-10-adr-009-edge-anonymization-and-lean-hybrid.md) |
 
 ## Соответствие исходной постановке задачи
 
@@ -51,3 +52,12 @@ ADR-007 и ADR-008 предложены на основании
 и [анализа конфликтов](../analysis/2026-10-22-multi-project-vps-constraints.md). При принятии они
 частично замещают ADR-003 (пункты 1–4 и раздел миграции) и уточняют ADR-001 (observability);
 конфликты аннотированы в тексте этих ADR, решения ADR-003 и ADR-001 до принятия не меняются.
+
+## Предложенный ADR Lean Global Compliance (issue [#46](https://github.com/G-Ivan-A/aether-orbis/issues/46))
+
+ADR-009 предложен на основании
+[RFC: Lean Global Compliance](../rfc/2026-10-lean-global-compliance.md) и
+[правовой и ценовой доказательной базы](../analysis/2026-10-23-lean-global-compliance-research.md).
+При принятии он уточняет класс D2 и S-5 ADR-007 подклассами D2-V / D2-R / D2-P / D1-A, допускает для
+AetherOrbis гибрид H1 на ступени 0 и уточняет ADR-003 п. 3 и ADR-002 (граница анонимизации до вызова
+LLM). Конфликты аннотированы в тексте ADR-007 и ADR-003; их решения до принятия не меняются.
