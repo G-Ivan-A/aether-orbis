@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.5
-updated: 2026-10-22
+version: 0.6
+updated: 2026-10-23
 temperature: 0.1
 ---
 
@@ -37,6 +37,11 @@ temperature: 0.1
   [`adr/2026-10-adr-007-multi-project-deployment-topology.md`](adr/2026-10-adr-007-multi-project-deployment-topology.md)
   и [`adr/2026-10-adr-008-inter-project-api-contract.md`](adr/2026-10-adr-008-inter-project-api-contract.md);
   доказательная база — [`analysis/2026-10-22-multi-project-vps-constraints.md`](analysis/2026-10-22-multi-project-vps-constraints.md).
+- [`rfc/2026-10-lean-global-compliance.md`](rfc/2026-10-lean-global-compliance.md) — Lean Global
+  Compliance: правовой анализ 152-ФЗ / GDPR / CCPA для публичных профессиональных данных, гибрид
+  «узел РФ + зарубежные вычисления» и анонимизация на границе (proposed), решение —
+  [`adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md`](adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md);
+  доказательная база — [`analysis/2026-10-23-lean-global-compliance-research.md`](analysis/2026-10-23-lean-global-compliance-research.md).
 
 ## Контракты
 
