@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.5
-updated: 2026-10-23
+version: 0.6
+updated: 2026-11-22
 temperature: 0.2
 ---
 
@@ -308,9 +308,10 @@ graph TB
 
 Действует при принятии [ADR-009](adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md);
 правовое обоснование, сравнение с вариантами H0 / H1+ / A-lean и пошаговая схема — в
-[RFC Lean Global Compliance](rfc/2026-10-lean-global-compliance.md). Уточняет § 8.1 для данных о
-людях из публичных источников: всё, что относится к отдельному человеку, начинается и заканчивается
-в РФ; зарубежный узел — вычислитель без памяти о людях.
+[RFC Lean Global Compliance](rfc/2026-10-lean-global-compliance.md). Диаграмма показывает базовый H1
+для GRA/AM-2. MVP техразведки использует
+[поток D1 с локальным vault для provenance](rfc/2026-10-lean-global-compliance.md#42-технологическая-разведка);
+C2 на ступени 2 доступен для проверенного D0/D1.
 
 ```mermaid
 graph LR
@@ -328,7 +329,7 @@ graph LR
     subgraph RS3["РФ S3"]
         S[(D2-R сырьё и бэкапы D2 — шифртекст)]
     end
-    subgraph EU["Зарубежный VPS — только D1-A и задания E"]
+    subgraph EU["Зарубежный VPS — D1-A"]
         Q[(Векторный индекс очищенного контента)]
         AG[(Граф компаний и тем, агрегаты k ≥ 5)]
         LW[Stateless LLM-воркеры]
@@ -338,18 +339,17 @@ graph LR
     end
 
     W --> F
-    F -->|шифрование на клиенте| S
     F --> G
+    G -->|после проверки отказа, шифрование на клиенте| S
     G --> V
     G --> P
     G --> R
     G -->|D1-A после валидатора экспорта| J
-    P -->|задание E: одноразовые псевдонимы| J
     J -->|WireGuard| Q
     J -->|WireGuard| AG
     J -->|WireGuard| LW
     LW -->|очищенный промпт| M
-    R -->|tombstone при отказе| J
+    R -->|отзыв по ID артефакта при отказе| J
 ```
 
 ## 9. Граница репозитория и runtime
