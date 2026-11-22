@@ -1,10 +1,19 @@
 # Phase 1 executable profile: AM-1 Domain Monitoring.
 schema_version: "1.0"
 profile_id: hub-practice-analysis
-profile_version: "1.0"
+profile_version: "1.1"
 phase: 1
 support: executable
 acquisition_model: AM-1
+offline_adapters:
+  claim_markers: [software architecture, research methodology, knowledge engineering]
+  measurements:
+    source_authority: source_authority
+    technical_specificity: topic_coverage
+    evidence_strength: evidence_strength
+    novelty: unmeasured
+    applicability: unmeasured
+  triage: [source_authority, technical_specificity]
 specification:
   schema_version: "1.0"
   specification_id: hub-practice-analysis

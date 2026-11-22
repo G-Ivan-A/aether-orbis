@@ -177,6 +177,7 @@ class ConfiguredEvaluator:
 
     measures: dict[str, MeasureFn] = field(default_factory=dict)
     triage_dimensions: tuple[str, ...] = ()
+    require_all_dimensions: bool = True
 
     def measure(
         self,
@@ -188,7 +189,7 @@ class ConfiguredEvaluator:
         """Return a measurement per characteristic available at *stage*."""
 
         unknown = sorted(set(dimensions) - set(self.measures))
-        if stage == "full" and unknown:
+        if stage == "full" and unknown and self.require_all_dimensions:
             raise SpecificationError(
                 "no measurement function is configured for declared dimensions: "
                 + ", ".join(unknown)

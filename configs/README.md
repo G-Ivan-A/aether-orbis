@@ -31,3 +31,18 @@ python3 tools/validate-contracts.py
 `AETHER_ORBIS_*` (см. [ADR-003](../docs/adr/2026-08-adr-003-infrastructure.md)). Нормативное
 разделение классов описано в
 [`research-specification-contract.md`](../docs/standards/research-specification-contract.md).
+
+Для операторского прогона на локальном корпусе передайте профиль и путь к каталогу с
+`manifest.json`. Ключи манифеста соответствуют значениям frontier профиля. Для другого
+направления укажите другой YAML и корпус в той же команде.
+
+```bash
+python3 tools/run-research-profile.py \
+  --profile configs/directions/hub-practice-analysis/research-profile.yaml \
+  --corpus /path/to/local/corpus
+```
+
+`--runtime` по умолчанию использует `configs/runtime/default.yaml`. Блок `offline_adapters`
+задаёт маркеры извлечения и имеющиеся измерители для оффлайн-прогона. Измерители по словарю
+и совпадениям проверяют проводку прогона. Допуск и оценка качества живого пилота описаны в
+[#52](https://github.com/G-Ivan-A/aether-orbis/issues/52).

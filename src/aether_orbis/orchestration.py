@@ -97,6 +97,7 @@ class ResearchRunOrchestrator:
     cost_per_iteration_rub: float = 0.0
     clock: Clock = field(default_factory=StepClock)
     telemetry: TelemetrySink | None = None
+    profile_version: str | None = None
 
     def __post_init__(self) -> None:
         self._events: list[dict[str, Any]] = []
@@ -247,7 +248,7 @@ class ResearchRunOrchestrator:
         cost: float,
     ) -> dict[str, Any]:
         outcomes = [material for report in reports for material in report.outcomes]
-        return {
+        document = {
             "schema_version": "1.0",
             "run_id": self.pipeline.run_id,
             "specification": {
@@ -282,6 +283,9 @@ class ResearchRunOrchestrator:
             },
             "outcome": dict(outcome),
         }
+        if self.profile_version is not None:
+            document["profile"] = {"id": self.pipeline.profile_id, "version": self.profile_version}
+        return document
 
     def _emit(
         self, operation_role: str, started: Any, *, payload: dict[str, Any] | None = None
