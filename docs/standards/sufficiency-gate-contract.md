@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 1.0
-updated: 2026-09-09
+version: 1.1
+updated: 2026-11-22
 temperature: 0.1
 owner: G-Ivan-A
 ---
@@ -51,6 +51,9 @@ zero.
 **ДОЛЖЕН** быть непустым; для `CONFLICT` **ДОЛЖЕН** быть указан хотя бы один конфликт и не менее
 двух `source_group_ids`.
 
+Ошибки получения из HTTP/RSS указываются в `gaps` стабильным кодом источника и учитываются при
+расчёте `window_coverage`. Код позволяет объяснить недобор без публикации содержимого источника.
+
 ### O-3. Метрики задаёт спецификация
 
 Имена `coverage` **ДОЛЖНЫ** происходить из `termination.completion_dimensions` конкретной Research
@@ -81,6 +84,7 @@ Research Run **ДОЛЖЕН** фиксировать версии специфи
 processed content identities, полные Qualification Decision с versioned policy и matched rule,
 итерации, фактический бюджет и outcome. Несовместимое изменение схемы outcome/run **ДОЛЖНО**
 повышать мажорную версию.
+При запуске по Research Profile документ **ДОЛЖЕН** дополнительно фиксировать его `id` и `version`.
 
 ### O-8. Телеметрия
 

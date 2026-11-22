@@ -60,6 +60,7 @@ class CompletionState:
     ingestion_failures: int = 0
     discovered_last_iteration: tuple[str, ...] = ()
     known_before_last_iteration: tuple[str, ...] = ()
+    source_access_failures: int = 0
 
 
 def termination(specification: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -193,6 +194,7 @@ def build_run_outcome(
     qualified: Sequence[MaterialOutcome],
     stop_reason: str,
     remaining_frontier: Sequence[FrontierItem] = (),
+    acquisition_gaps: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Return the explained Research Run Outcome.
 
@@ -211,6 +213,7 @@ def build_run_outcome(
 
     conditions = success_conditions(specification)
     gaps = list(unmet_conditions(coverage, conditions))
+    gaps.extend(acquisition_gaps)
     conflicts = detect_conflicts(qualified)
 
     if not qualified:

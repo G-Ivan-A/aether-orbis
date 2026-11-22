@@ -1,15 +1,21 @@
 import copy
+from contextlib import redirect_stdout
+from io import StringIO
 import json
 from pathlib import Path
+import runpy
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 import yaml
 
 from tests.support import ROOT
 from tools.contract_validation import load_document, validate_instance
+
+from aether_orbis.adapters.http_fetcher import HttpResponse, HttpRssFetcher
 
 
 class ProfileRunTests(unittest.TestCase):
@@ -68,6 +74,30 @@ class ProfileRunTests(unittest.TestCase):
         self.assertEqual(2, execution.returncode)
         self.assertIn("has no triage measurement", execution.stderr)
         self.assertNotIn("manifest.json", execution.stderr)
+
+    def test_approved_manifest_is_loaded_through_the_operator_entry_point(self):
+        def transport(url, timeout, max_bytes):
+            self.assertEqual("https://fixture.example/robots.txt", url)
+            return HttpResponse(403, {})
+
+        tracked = ROOT / "configs/directions/hub-practice-analysis/research-profile.yaml"
+        with TemporaryDirectory() as directory:
+            manifest = Path(directory) / "http.yaml"
+            manifest.write_text(yaml.safe_dump({
+                "approval_reference": "synthetic-fixture",
+                "frontier": {"https://habr.com/ru/feed/": {"urls": ["https://fixture.example/finding/"]}},
+            }), encoding="utf-8")
+            arguments = ["run-research-profile.py", "--profile", str(tracked), "--http-sources", str(manifest)]
+            output = StringIO()
+            with patch.object(sys, "argv", arguments), redirect_stdout(output), patch(
+                "aether_orbis.adapters.http_fetcher.HttpRssFetcher",
+                side_effect=lambda **kwargs: HttpRssFetcher(transport=transport, **kwargs),
+            ):
+                self.assertEqual(0, runpy.run_path(str(ROOT / "tools/run-research-profile.py"))["main"]())
+        result = json.loads(output.getvalue())
+        self.assertEqual("ZERO", result["run"]["outcome"]["status"])
+        self.assertEqual(["source_http_403"], result["failures"])
+        self.assertIn("Source access failed (source_http_403).", result["run"]["outcome"]["gaps"])
 
     def _run(self, profile: Path, corpus: Path) -> subprocess.CompletedProcess:
         return subprocess.run(

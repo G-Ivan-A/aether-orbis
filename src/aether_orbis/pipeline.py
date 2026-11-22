@@ -16,8 +16,8 @@ from aether_orbis.errors import MalformedSourceError
 from aether_orbis.extraction import build_extraction_result, extraction_telemetry
 from aether_orbis.frontier import build_frontier
 from aether_orbis.grouping import SourceGrouper
-from aether_orbis.ingestion import ingest_material
-from aether_orbis.model import FrontierItem, MaterialOutcome, NormalizedSource
+from aether_orbis.ingestion import fetch_frontier, ingest_material
+from aether_orbis.model import FrontierItem, MaterialOutcome, NormalizedSource, SourceAccessFailure
 from aether_orbis.ports import (
     CharacteristicEvaluator,
     ContentParser,
@@ -56,11 +56,12 @@ class InMemoryRecordStore:
 
 @dataclass(frozen=True)
 class IngestionFailure:
-    """Material that could not be normalized into a contractual identity."""
+    """Material that could not be fetched or normalized."""
 
     item: FrontierItem
     url: str
     reason: str
+    access_code: str | None = None
 
 
 @dataclass(frozen=True)
@@ -127,30 +128,26 @@ class AcquisitionPipeline:
         outcomes: list[MaterialOutcome] = []
         failures: list[IngestionFailure] = []
 
-        for item in items:
-            for material in self.fetcher.fetch(item):
-                started = self.clock.now()
-                try:
-                    source = ingest_material(material, self.parser, self.grouper)
-                except MalformedSourceError as error:
-                    self._emit(
-                        "parsing",
-                        started,
-                        status="error",
-                        error_code="malformed_source",
-                    )
-                    failures.append(
-                        IngestionFailure(item=item, url=material.url, reason=str(error))
-                    )
-                    continue
-                self._emit("parsing", started, status="ok")
-                if source.source_id in seen:
-                    continue
-                seen.add(source.source_id)
-                outcome = self._process(source)
-                outcomes.append(outcome)
-                if self.store is not None:
-                    self.store.save(outcome)
+        for item, material in fetch_frontier(items, self.fetcher):
+            started = self.clock.now()
+            if isinstance(material, SourceAccessFailure):
+                self._emit("discovery", started, status="error", error_code=material.code)
+                failures.append(IngestionFailure(item, material.url, material.code, material.code))
+                continue
+            try:
+                source = ingest_material(material, self.parser, self.grouper)
+            except MalformedSourceError as error:
+                self._emit("parsing", started, status="error", error_code="malformed_source")
+                failures.append(IngestionFailure(item=item, url=material.url, reason=str(error)))
+                continue
+            self._emit("parsing", started, status="ok")
+            if source.source_id in seen:
+                continue
+            seen.add(source.source_id)
+            outcome = self._process(source)
+            outcomes.append(outcome)
+            if self.store is not None:
+                self.store.save(outcome)
 
         return AcquisitionRun(
             frontier=items,

@@ -147,6 +147,7 @@ class ResearchRunOrchestrator:
             frontier = next_frontier(
                 self.specification, result.outcomes, visited=processed_values
             )
+            access_failures = sum(failure.access_code is not None for failure in failures)
             coverage = dict(
                 self.completion.measure_completion(
                     sufficiency.CompletionState(
@@ -158,9 +159,10 @@ class ResearchRunOrchestrator:
                         ),
                         remaining_frontier=frontier,
                         iterations=len(reports) + 1,
-                        ingestion_failures=len(failures),
+                        ingestion_failures=len(failures) - access_failures,
                         discovered_last_iteration=known_entities,
                         known_before_last_iteration=before,
+                        source_access_failures=access_failures,
                     ),
                     dimensions,
                 )
@@ -186,6 +188,10 @@ class ResearchRunOrchestrator:
             qualified=self._qualified(outcomes),
             stop_reason=stop_reason,
             remaining_frontier=frontier,
+            acquisition_gaps=tuple(
+                f"Source access failed ({failure.access_code})."
+                for failure in failures if failure.access_code is not None
+            ),
         )
         document = self._document(outcome, reports, cost)
         self._emit("run_outcome", self.clock.now(), payload={"outcome": dict(outcome)})

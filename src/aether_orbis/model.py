@@ -40,6 +40,14 @@ class RawMaterial:
 
 
 @dataclass(frozen=True)
+class SourceAccessFailure:
+    """An expected fetch failure with a stable operator-facing code."""
+
+    url: str
+    code: str
+
+
+@dataclass(frozen=True)
 class NormalizedSource:
     """Normalized material carrying the mandatory content identity."""
 
