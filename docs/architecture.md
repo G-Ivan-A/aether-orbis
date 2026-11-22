@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.4
-updated: 2026-10-22
+version: 0.5
+updated: 2026-10-23
 temperature: 0.2
 ---
 
@@ -304,6 +304,54 @@ graph TB
 контракт через reverse proxy (ADR-008 п. 1). Переход на брокер (триггер T-QUEUE) меняет транспорт
 за портом, но не контракт.
 
+### 8.2. Предложенный гибрид H1: узел РФ + зарубежные вычисления
+
+Действует при принятии [ADR-009](adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md);
+правовое обоснование, сравнение с вариантами H0 / H1+ / A-lean и пошаговая схема — в
+[RFC Lean Global Compliance](rfc/2026-10-lean-global-compliance.md). Уточняет § 8.1 для данных о
+людях из публичных источников: всё, что относится к отдельному человеку, начинается и заканчивается
+в РФ; зарубежный узел — вычислитель без памяти о людях.
+
+```mermaid
+graph LR
+    subgraph SRC["Публичные площадки (allowlist)"]
+        W[Хабр / GitHub / ...]
+    end
+    subgraph RU["Узел РФ — сбор и данные о людях"]
+        F[Сборщик + headless]
+        G[Граница анонимизации G0–G8]
+        V[(D2-V: токен → идентичность)]
+        P[(D2-P: персональный граф на токенах)]
+        R[(Реестр отказов, журнал)]
+        J[Job API]
+    end
+    subgraph RS3["РФ S3"]
+        S[(D2-R сырьё и бэкапы D2 — шифртекст)]
+    end
+    subgraph EU["Зарубежный VPS — только D1-A и задания E"]
+        Q[(Векторный индекс очищенного контента)]
+        AG[(Граф компаний и тем, агрегаты k ≥ 5)]
+        LW[Stateless LLM-воркеры]
+    end
+    subgraph EXTP["Внешние модели — ADR-002"]
+        M[Модели RF / China]
+    end
+
+    W --> F
+    F -->|шифрование на клиенте| S
+    F --> G
+    G --> V
+    G --> P
+    G --> R
+    G -->|D1-A после валидатора экспорта| J
+    P -->|задание E: одноразовые псевдонимы| J
+    J -->|WireGuard| Q
+    J -->|WireGuard| AG
+    J -->|WireGuard| LW
+    LW -->|очищенный промпт| M
+    R -->|tombstone при отказе| J
+```
+
 ## 9. Граница репозитория и runtime
 
 ```mermaid
@@ -334,5 +382,6 @@ graph LR
 - [`configs/schemas/`](../configs/schemas/) — исполняемые схемы контрактов
 - [`docs/adr/README.md`](adr/README.md) — технические решения
 - [ADR-007](adr/2026-10-adr-007-multi-project-deployment-topology.md), [ADR-008](adr/2026-10-adr-008-inter-project-api-contract.md), [RFC мульти-проектной платформы](rfc/2026-10-multi-project-vps-platform.md) — предложенная топология и межпроектный API (proposed)
+- [ADR-009](adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md), [RFC Lean Global Compliance](rfc/2026-10-lean-global-compliance.md) — гибрид H1 и анонимизация на границе (proposed)
 - [`docs/running-locally.md`](running-locally.md) — как исполнить описанный поток локально
 - [`docs/roadmap.md`](roadmap.md) — состояние фаз и границы Фазы 1
