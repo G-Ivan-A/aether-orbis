@@ -121,6 +121,31 @@ class PortIsolationTests(unittest.TestCase):
                             f"{path.name} imports third-party module {module!r}",
                         )
 
+    def test_provider_sdk_imports_are_confined_to_the_router(self):
+        providers = {
+            "anthropic", "cohere", "gigachat", "google.generativeai", "google.genai",
+            "litellm", "mistralai", "ollama", "openai", "openrouter", "together", "yandex_cloud_ml_sdk",
+        }
+        router = PACKAGE / "adapters" / "model_router.py"
+        for root in (PACKAGE, ROOT / "examples", ROOT / "tools"):
+            for path in sorted(root.rglob("*.py")):
+                if path == router:
+                    continue
+                tree = ast.parse(path.read_text(encoding="utf-8"))
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.ImportFrom) and node.module:
+                        names = [node.module, *(f"{node.module}.{alias.name}" for alias in node.names)]
+                    elif isinstance(node, ast.Import):
+                        names = [alias.name for alias in node.names]
+                    else:
+                        continue
+                    for name in names:
+                        with self.subTest(path=path, module=name):
+                            self.assertFalse(any(
+                                name == provider or name.startswith(provider + ".")
+                                for provider in providers
+                            ), f"{path.name} must use ModelRouter for {name}")
+
 
 def _is_standard_library(name: str) -> bool:
     import sys
