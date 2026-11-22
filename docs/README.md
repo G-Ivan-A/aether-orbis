@@ -1,7 +1,7 @@
 ---
 status: draft
-version: 0.6
-updated: 2026-10-23
+version: 0.7
+updated: 2026-11-22
 temperature: 0.1
 ---
 
@@ -42,6 +42,8 @@ temperature: 0.1
   «узел РФ + зарубежные вычисления» и анонимизация на границе (proposed), решение —
   [`adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md`](adr/2026-10-adr-009-edge-anonymization-and-lean-hybrid.md);
   доказательная база — [`analysis/2026-10-23-lean-global-compliance-research.md`](analysis/2026-10-23-lean-global-compliance-research.md).
+- [Готовность к первому пилоту техразведки](analysis/2026-11-22-customer-pilot-readiness.md) —
+  сверка с исполняемыми контрактами, границы фазы 2 и критерии допуска к живому прогону.
 
 ## Контракты
 

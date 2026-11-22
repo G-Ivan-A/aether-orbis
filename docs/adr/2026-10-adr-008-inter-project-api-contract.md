@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 0.1
-updated: 2026-10-22
+version: 0.2
+updated: 2026-11-22
 temperature: 0.1
 owner: G-Ivan-A
 decision-type: runtime
@@ -24,6 +24,11 @@ decision-type: runtime
 | Superseded by | — |
 
 ## Context
+
+Пилот для одного заказчика допускает закрытый операторский запуск существующего Research Run
+без межпроектного клиента. Этот ADR применяется при появлении сервисного потребителя. Job API
+предложен для [T3.4](https://github.com/G-Ivan-A/aether-orbis/issues/17); при подключении n8n он
+вызывает API как внешний клиент. Исследовательские правила и жизненный цикл прогона остаются в ядре.
 
 Три независимых проекта на общем хосте ([ADR-007](2026-10-adr-007-multi-project-deployment-topology.md))
 начинают обмениваться данными: БА-проект и третий проект могут заказывать у AetherOrbis
