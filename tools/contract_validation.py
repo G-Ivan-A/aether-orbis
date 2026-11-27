@@ -136,6 +136,23 @@ def validate_policy_dimensions(document: Any, schema_name: str) -> list[str]:
                 "$.specification.acquisition_model: must match $.acquisition_model "
                 f"({outer_model!r})"
             )
+        adapters = document.get("offline_adapters")
+        if isinstance(adapters, dict) and isinstance(adapters.get("measurements"), dict):
+            measurements = adapters["measurements"]
+            declared = evaluation.get("dimensions", []) if isinstance(evaluation, dict) else []
+            if isinstance(declared, list):
+                names = {value for value in declared if isinstance(value, str)}
+                for name in sorted(measurements.keys() - names, key=str):
+                    errors.append(f"$.offline_adapters.measurements.{name}: dimension is not declared")
+                for name in sorted(names - measurements.keys()):
+                    errors.append(f"$.offline_adapters.measurements.{name}: configure a measurement or unmeasured")
+            triage = adapters.get("triage")
+            if isinstance(triage, list):
+                for name in triage:
+                    if isinstance(name, str) and measurements.get(name) not in (
+                        "topic_coverage", "source_authority", "duplicate_independence",
+                    ):
+                        errors.append(f"$.offline_adapters.triage: {name!r} has no triage measurement")
 
     return errors
 

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether-orbis.dev/schemas/http-source-manifest.schema.json",
+  "title": "Approved HTTP source manifest for one AM-1 run",
+  "type": "object",
+  "required": ["approval_reference", "frontier"],
+  "properties": {
+    "approval_reference": {"type": "string", "pattern": "\\S"},
+    "frontier": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 50,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "uniqueItems": true,
+            "items": {"$ref": "#/$defs/https_url"}
+          },
+          "habr_rss": {"$ref": "#/$defs/https_url"}
+        },
+        "minProperties": 1,
+        "additionalProperties": false
+      }
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "max_urls": {"type": "integer", "minimum": 1, "maximum": 50},
+        "max_bytes": {"type": "integer", "minimum": 1, "maximum": 2000000},
+        "delay_seconds": {"type": "number", "minimum": 1, "maximum": 60},
+        "timeout_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 30},
+        "run_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 300},
+        "max_redirects": {"type": "integer", "minimum": 0, "maximum": 5}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "https_url": {"type": "string", "format": "uri", "pattern": "^https://", "maxLength": 2048}
+  }
+}

@@ -1,10 +1,18 @@
 # Phase 1 executable profile: AM-2 Entity / Relationship Extraction.
 schema_version: "1.0"
 profile_id: reputation-technologies
-profile_version: "1.0"
+profile_version: "1.1"
 phase: 1
 support: executable
 acquisition_model: AM-2
+offline_adapters:
+  claim_markers: [member, partner, technology]
+  measurements:
+    source_authority: source_authority
+    evidence_strength: evidence_strength
+    independence: duplicate_independence
+    applicability: unmeasured
+  triage: [source_authority, independence]
 specification:
   schema_version: "1.0"
   specification_id: reputation-technologies

@@ -1,6 +1,6 @@
 ---
 status: draft
-version: 0.8
+version: 0.9
 updated: 2026-11-22
 temperature: 0.2
 ---
@@ -124,15 +124,16 @@ CI. Реализация ingestion, LLM, persistence и end-to-end прогон�
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | B-001 | Подтверждённый оффлайн-прогон | null | - | DONE | [#37](https://github.com/G-Ivan-A/aether-orbis/issues/37), [#41](https://github.com/G-Ivan-A/aether-orbis/issues/41) | [Фаза 1](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/roadmap.md#фаза-1--интеграция-open-source) | AM-1/AM-2 на фикстурах, границы проверены | null |
 | B-002 | Проекты общего хоста и гибрида | null | - | DONE | [#44](https://github.com/G-Ivan-A/aether-orbis/issues/44), [#46](https://github.com/G-Ivan-A/aether-orbis/issues/46) | [PR #45](https://github.com/G-Ivan-A/aether-orbis/pull/45), [PR #47](https://github.com/G-Ivan-A/aether-orbis/pull/47) | Предложения опубликованы, статус ADR/RFC остаётся `proposed` | null |
-| B-003 | Сверка требований и обновление предложений | P1 | B-001, B-002 | review | [#48](https://github.com/G-Ivan-A/aether-orbis/issues/48), [#50](https://github.com/G-Ivan-A/aether-orbis/issues/50) | [PR #49](https://github.com/G-Ivan-A/aether-orbis/pull/49) | Рекомендация о старте фазы 2 и маршрут пилота | Creative |
-| B-004 | Model Router (T2.1) | null | B-001 | TODO | [#9](https://github.com/G-Ivan-A/aether-orbis/issues/9) | [ADR-002](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-08-adr-002-model-routing.md) | Настроить один согласованный маршрут, закрыть неизвестные маршруты и fallback | null |
-| B-005 | YAML-профиль (T2.4) | null | B-001 | TODO | [#12](https://github.com/G-Ivan-A/aether-orbis/issues/12) | [Research Specification](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/adr/2026-09-adr-006-research-specification.md) | Тема, разрешённые источники и политика заказчика выбираются при запуске | null |
-| B-006 | Ограниченный HTTP/RSS для AM-1 | null | B-001 | TODO | [#51](https://github.com/G-Ivan-A/aether-orbis/issues/51) | [Оценка пилота](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-11-22-customer-pilot-readiness.md) | Поддержать разрешённый манифест URL и опциональный RSS. Проверить отказы на фикстурах | Hybrid |
+| B-003 | Сверка требований и обновление предложений | P1 | B-001, B-002 | DONE | [#48](https://github.com/G-Ivan-A/aether-orbis/issues/48), [#50](https://github.com/G-Ivan-A/aether-orbis/issues/50) | [PR #49](https://github.com/G-Ivan-A/aether-orbis/pull/49) | Рекомендация о старте фазы 2 и маршрут пилота приняты | Creative |
+| B-004 | Model Router (T2.1) | null | B-001 | review | [#9](https://github.com/G-Ivan-A/aether-orbis/issues/9) | [Постановка и приёмка](analysis/2026-11-22-phase-2-pilot-foundations.md#b-004--model-router) | Выбор маршрута по роли и допуск модельного запроса проверены на имитации | Hybrid |
+| B-005 | YAML-профиль (T2.4) | null | B-001 | review | [#12](https://github.com/G-Ivan-A/aether-orbis/issues/12) | [Постановка и приёмка](analysis/2026-11-22-phase-2-pilot-foundations.md#b-005--yaml-профили-направлений) | Два направления запускаются одной командой по YAML | Hybrid |
+| B-006 | Ограниченный HTTP/RSS для AM-1 | null | B-001 | review | [#51](https://github.com/G-Ivan-A/aether-orbis/issues/51) | [Постановка и приёмка](analysis/2026-11-22-phase-2-pilot-foundations.md#b-006--httprss-для-am-1) | Манифест и опциональный RSS проверены на фикстурах | Hybrid |
 | B-007 | Допуск и прогон для одного заказчика | null | B-004, B-005, B-006 | TODO | [#52](https://github.com/G-Ivan-A/aether-orbis/issues/52) | [Оценка пилота](https://github.com/G-Ivan-A/aether-orbis/blob/main/docs/analysis/2026-11-22-customer-pilot-readiness.md), [методика T2.3](https://github.com/G-Ivan-A/aether-orbis/issues/11) | Закрытый запуск, проверка результата и решение о повторе | Hybrid |
 
 Для B-007 достаточно проверки целевого модельного маршрута по методике T2.3. Общий сравнительный
-прогон T2.3 и широкая валидация фазы 4 идут по своим задачам. После слияния B-003 закрывается,
-а B-004…B-006 можно выполнять параллельно. B-007 использует их результаты.
+прогон T2.3 и широкая валидация фазы 4 идут по своим задачам. B-003 закрыт слиянием PR #49.
+Результаты B-004…B-006 подготовлены в ветке и ждут ревью и интеграции. B-007 использует их
+после подтверждения допуска.
 
 К следующим задачам возвращаемся по наблюдаемым условиям:
 

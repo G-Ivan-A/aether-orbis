@@ -18,6 +18,7 @@
   "properties": {
     "schema_version": {"const": "1.0"},
     "run_id": {"type": "string", "minLength": 1},
+    "profile": {"$ref": "#/$defs/versioned_reference"},
     "specification": {"$ref": "#/$defs/versioned_reference"},
     "runtime_configuration": {"$ref": "#/$defs/versioned_reference"},
     "model_versions": {

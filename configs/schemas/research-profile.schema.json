@@ -27,6 +27,37 @@
     "acquisition_model": {"enum": ["AM-1", "AM-2", "AM-3", "AM-4", "AM-5"]},
     "specification": {
       "$ref": "https://aether-orbis.dev/schemas/research-specification.schema.json"
+    },
+    "offline_adapters": {
+      "type": "object",
+      "required": ["claim_markers", "measurements", "triage"],
+      "properties": {
+        "claim_markers": {"$ref": "#/$defs/names"},
+        "source_authority": {
+          "type": "object",
+          "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "measurements": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "enum": [
+              "topic_coverage", "evidence_strength", "source_authority",
+              "duplicate_independence", "unmeasured"
+            ]
+          }
+        },
+        "triage": {"$ref": "#/$defs/names"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "names": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
     }
   },
   "additionalProperties": false,

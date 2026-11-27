@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install test dependencies
-        run: python3 -m pip install --user --quiet -r requirements-dev.txt
+        run: python3 -m pip install --user --quiet -r requirements-dev.txt -r requirements-models.txt
       - name: Validate contract artifacts
         run: python3 tools/validate-contracts.py
       - name: Run tests

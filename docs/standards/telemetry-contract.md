@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 1.0
-updated: 2026-09-09
+version: 1.1
+updated: 2026-11-22
 temperature: 0.1
 owner: G-Ivan-A
 ---
@@ -38,7 +38,7 @@ owner: G-Ivan-A
 ### O-2. Роли операций
 
 `operation_role` **ДОЛЖНА** быть одной из `discovery`, `parsing`, `extraction`, `triage`,
-`full_evaluation`, `qualification`, `knowledge_building`, `run_outcome`. Роль определяет допустимый
+`full_evaluation`, `qualification`, `knowledge_building`, `model_routing`, `run_outcome`. Роль определяет допустимый
 payload: успешные и частичные `extraction`, `triage`, `full_evaluation`, `qualification` и
 `run_outcome` **ДОЛЖНЫ** содержать одноимённый доменный payload и **НЕ ДОЛЖНЫ** переносить payload
 другой роли. Событие со `status: error` **МОЖЕТ** не иметь результата операции и фиксирует ошибку
@@ -50,6 +50,9 @@ payload: успешные и частичные `extraction`, `triage`, `full_ev
 Если шаг вызывает модель, `model_call` **ДОЛЖЕН** фиксировать `provider`, `model`, `tokens_in`,
 `tokens_out`, `cached_tokens`, `cost_rub` и `batch`. Стоимость измеряется в рублях, латентность — в
 миллисекундах, токены — в единицах провайдера; разные единицы **НЕ ДОЛЖНЫ** смешиваться в поле.
+`model_routing` **ДОЛЖЕН** указывать роль и alias в `model_call`. Отказ до разрешения маршрута
+фиксирует `model_role` и `error_code`. Недоступные счётчики и стоимость записываются как `null`.
+Запрос, ответ, URL API и ключ модели в событие не включаются.
 
 ### O-4. Раздельные extraction-метрики
 
@@ -100,6 +103,7 @@ recommended expansion и rationale. Телеметрия **НЕ ДОЛЖНА** �
 | triage / full evaluation | stage, named characteristics, cost |
 | qualification | decision и versioned policy |
 | knowledge building | принятые claims/relations и provenance |
+| model routing | роль, маршрут, модель, latency, доступные usage/cost и код ошибки |
 | завершение run | пять outcome statuses, coverage, gaps/conflicts и consumed budget |
 
 ## Definition of Done / критерии соответствия

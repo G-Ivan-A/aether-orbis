@@ -16,8 +16,8 @@ from urllib.parse import urlsplit, urlunsplit
 
 from aether_orbis.errors import MalformedSourceError
 from aether_orbis.grouping import SourceGrouper
-from aether_orbis.model import FrontierItem, NormalizedSource, RawMaterial
-from aether_orbis.ports import ContentParser, SourceFetcher
+from aether_orbis.model import FrontierItem, NormalizedSource, RawMaterial, SourceAccessFailure
+from aether_orbis.ports import BatchSourceFetcher, ContentParser, SourceFetcher
 
 DEFAULT_PORTS = {"http": "80", "https": "443"}
 _BLANK_LINES = re.compile(r"\n{3,}")
@@ -146,21 +146,36 @@ def ingest_material(
     )
 
 
+def fetch_frontier(
+    items: Iterable[FrontierItem], fetcher: SourceFetcher,
+) -> Iterable[tuple[FrontierItem, RawMaterial | SourceAccessFailure]]:
+    if isinstance(fetcher, BatchSourceFetcher):
+        yield from fetcher.fetch_batch(items)
+        return
+    for item in items:
+        for material in fetcher.fetch(item):
+            yield item, material
+
+
 def ingest_frontier(
     items: Iterable[FrontierItem],
     fetcher: SourceFetcher,
     parser: ContentParser,
     grouper: SourceGrouper,
-) -> Iterator[tuple[FrontierItem, RawMaterial, NormalizedSource | None, Exception | None]]:
+) -> Iterator[
+    tuple[FrontierItem, RawMaterial | SourceAccessFailure, NormalizedSource | None, Exception | None]
+]:
     """Yield an ingestion attempt per material discovered on the frontier.
 
     Malformed material is reported instead of raising, so that one bad document
     cannot terminate a research run.
     """
 
-    for item in items:
-        for material in fetcher.fetch(item):
-            try:
-                yield item, material, ingest_material(material, parser, grouper), None
-            except MalformedSourceError as error:
-                yield item, material, None, error
+    for item, material in fetch_frontier(items, fetcher):
+        if isinstance(material, SourceAccessFailure):
+            yield item, material, None, MalformedSourceError(material.code)
+            continue
+        try:
+            yield item, material, ingest_material(material, parser, grouper), None
+        except MalformedSourceError as error:
+            yield item, material, None, error

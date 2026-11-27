@@ -97,6 +97,7 @@ class ResearchRunOrchestrator:
     cost_per_iteration_rub: float = 0.0
     clock: Clock = field(default_factory=StepClock)
     telemetry: TelemetrySink | None = None
+    profile_version: str | None = None
 
     def __post_init__(self) -> None:
         self._events: list[dict[str, Any]] = []
@@ -146,6 +147,7 @@ class ResearchRunOrchestrator:
             frontier = next_frontier(
                 self.specification, result.outcomes, visited=processed_values
             )
+            access_failures = sum(failure.access_code is not None for failure in failures)
             coverage = dict(
                 self.completion.measure_completion(
                     sufficiency.CompletionState(
@@ -157,9 +159,10 @@ class ResearchRunOrchestrator:
                         ),
                         remaining_frontier=frontier,
                         iterations=len(reports) + 1,
-                        ingestion_failures=len(failures),
+                        ingestion_failures=len(failures) - access_failures,
                         discovered_last_iteration=known_entities,
                         known_before_last_iteration=before,
+                        source_access_failures=access_failures,
                     ),
                     dimensions,
                 )
@@ -185,6 +188,10 @@ class ResearchRunOrchestrator:
             qualified=self._qualified(outcomes),
             stop_reason=stop_reason,
             remaining_frontier=frontier,
+            acquisition_gaps=tuple(
+                f"Source access failed ({failure.access_code})."
+                for failure in failures if failure.access_code is not None
+            ),
         )
         document = self._document(outcome, reports, cost)
         self._emit("run_outcome", self.clock.now(), payload={"outcome": dict(outcome)})
@@ -247,7 +254,7 @@ class ResearchRunOrchestrator:
         cost: float,
     ) -> dict[str, Any]:
         outcomes = [material for report in reports for material in report.outcomes]
-        return {
+        document = {
             "schema_version": "1.0",
             "run_id": self.pipeline.run_id,
             "specification": {
@@ -282,6 +289,9 @@ class ResearchRunOrchestrator:
             },
             "outcome": dict(outcome),
         }
+        if self.profile_version is not None:
+            document["profile"] = {"id": self.pipeline.profile_id, "version": self.profile_version}
+        return document
 
     def _emit(
         self, operation_role: str, started: Any, *, payload: dict[str, Any] | None = None

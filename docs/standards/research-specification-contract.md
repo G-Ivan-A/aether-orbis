@@ -1,7 +1,7 @@
 ---
 status: proposed
-version: 1.0
-updated: 2026-09-09
+version: 1.1
+updated: 2026-11-22
 temperature: 0.1
 owner: G-Ivan-A
 ---
@@ -134,3 +134,11 @@ Research Profile Phase 1 **ДОЛЖЕН**:
 - [`preservation-contract.md`](preservation-contract.md)
 - [`relevance-gate-contract.md`](relevance-gate-contract.md)
 - [`sufficiency-gate-contract.md`](sufficiency-gate-contract.md)
+
+## Запуск направления на локальном корпусе
+
+При запуске через `tools/run-research-profile.py` профиль и runtime проходят валидацию до
+загрузки корпуса. Профиль задаёт часть настроек локальных адаптеров в `offline_adapters`.
+Для каждой объявленной характеристики указан измеритель или явное `unmeasured`. При
+`unmeasured` условие, ссылающееся на эту характеристику, не совпадает. Для triage
+требуется хотя бы один настроенный измеритель, работающий до извлечения.

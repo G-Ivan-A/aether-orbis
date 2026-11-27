@@ -16,6 +16,7 @@ from aether_orbis.model import (
     Measurement,
     NormalizedSource,
     RawMaterial,
+    SourceAccessFailure,
 )
 from aether_orbis.representations import GraphProjection, VectorChunk
 from aether_orbis.sufficiency import CompletionState
@@ -25,8 +26,18 @@ from aether_orbis.sufficiency import CompletionState
 class SourceFetcher(Protocol):
     """Retrieves raw material for one frontier item."""
 
-    def fetch(self, item: FrontierItem) -> Iterable[RawMaterial]:
+    def fetch(self, item: FrontierItem) -> Iterable[RawMaterial | SourceAccessFailure]:
         """Yield every raw material discovered for *item*."""
+
+
+@runtime_checkable
+class BatchSourceFetcher(SourceFetcher, Protocol):
+    """Optionally share request limits and deduplication across a frontier."""
+
+    def fetch_batch(
+        self, items: Iterable[FrontierItem],
+    ) -> Iterable[tuple[FrontierItem, RawMaterial | SourceAccessFailure]]:
+        """Yield results with the originating frontier item."""
 
 
 @runtime_checkable

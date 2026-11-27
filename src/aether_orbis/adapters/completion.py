@@ -22,25 +22,25 @@ def window_coverage() -> CompletionFn:
     """Share of the window's material that the run could actually evaluate.
 
     AM-1 monitors a window, and what makes the window incompletely covered is
-    material the run could not turn into a decision at all — a source that failed
-    to normalize is a hole in the observation, while a source that was evaluated
-    and rejected is a result.
+    material the run could not retrieve or normalize. A source that was evaluated
+    and rejected still contributes to coverage.
     """
 
     def measure(state: CompletionState) -> Measurement:
         evaluated = len(state.outcomes)
-        total = evaluated + state.ingestion_failures
+        retrieved = evaluated + state.ingestion_failures
+        total = retrieved + state.source_access_failures
         if not total:
             return Measurement(
                 score=0.0, rationale="No material was retrieved for the window."
             )
-        return Measurement(
-            score=round(evaluated / total, 4),
-            rationale=(
-                f"{evaluated} of {total} retrieved material(s) reached a decision; "
-                f"{state.ingestion_failures} could not be normalized."
-            ),
+        rationale = (
+            f"{evaluated} of {retrieved} retrieved material(s) reached a decision; "
+            f"{state.ingestion_failures} could not be normalized."
         )
+        if state.source_access_failures:
+            rationale += f" {state.source_access_failures} source retrieval attempt(s) failed."
+        return Measurement(score=round(evaluated / total, 4), rationale=rationale)
 
     return measure
 
